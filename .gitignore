@@ -1,5 +1,9 @@
 # Project
+<<<<<<< HEAD
 app.json
+=======
+# app.json
+>>>>>>> e2fd94b (chore: change expo project id)
 .env
 
 # OSX
