@@ -4,17 +4,41 @@
 
 ## Pre-requisites
 
-This project uses Expo for React Native. To use the packages provided by Expo, please install them by running `yarn` first.
-
-For better type annotation, typescript is recommended.
-
-## To begin the app [DEV]
-
-- Run `yarn` for install packages.
+- Run `yarn` for install packages (Node.js required).
 - Enable developer mode and connect your tester device
   - [Android]: <https://developer.android.com/codelabs/basic-android-kotlin-compose-connect-device#0>.
   - [iOS]: <https://getupdraft.com/blog/how-enable-ios-developer-mode-iphone-or-ipad>.
-- Depends on your development environment, run `yarn android` or `yarn ios` for running on your mobile.
+- Create a `.env` file, including:
+
+```txt
+// your expo project appid
+appid=xxxx
+```
+
+## Development
+
+### Quick Start
+
+```sh
+yarn 
+
+yarn initapp
+
+# for simulator, see
+# https://docs.expo.dev/get-started/create-a-project/#open-the-app-on-your-device
+# Depends on your development environment, run for running on your mobile.
+yarn android
+# or
+yarn ios
+```
+
+### Android
+
+- TODO
+
+### IOS
+
+- TODO
 
 ### Remarks
 

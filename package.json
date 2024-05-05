@@ -4,6 +4,7 @@
   "main": "expo-router/entry",
   "scripts": {
     "ts:check": "tsc",
+    "initapp": "tsx ./scripts/init.ts",
     "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios --device",
@@ -74,6 +75,7 @@
     "@types/react-dom": "~18.0.10",
     "@types/react-native": "^0.73.0",
     "@types/three": "^0.156.0",
+    "dotenv": "^16.4.5",
     "expo-asset": "~8.10.1",
     "react-native-svg-transformer": "^1.1.0"
   },

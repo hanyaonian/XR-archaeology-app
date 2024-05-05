@@ -49,7 +49,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "3c909800-1b86-47d8-86e5-52ac2a13842a"
+        "projectId": "[PROJECT_ID]"
       }
     },
     "owner": "catpotato"
