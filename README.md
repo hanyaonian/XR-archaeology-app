@@ -17,7 +17,7 @@ For better type annotation, typescript is recommended.
   - [iOS]: <https://getupdraft.com/blog/how-enable-ios-developer-mode-iphone-or-ipad>.
 - Create a `.env` file, including:
 
-```txt
+```text
 // your expo project appid
 appid=xxxx
 // for eas distribution
@@ -58,10 +58,6 @@ yarn ios
 ```sh
 eas build -p android --profile preview --local
 ```
-
-### IOS
-
-- TODO
 
 ### Remarks
 
