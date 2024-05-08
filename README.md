@@ -4,7 +4,7 @@
 
 ## Pre-requisites
 
-- Run `yarn` for install packages (Node.js required).
+- Run `yarn` for install packages (Node.js required, version < `18`).
 - Enable developer mode and connect your tester device
   - [Android]: <https://developer.android.com/codelabs/basic-android-kotlin-compose-connect-device#0>.
   - [iOS]: <https://getupdraft.com/blog/how-enable-ios-developer-mode-iphone-or-ipad>.
@@ -13,7 +13,13 @@
 ```txt
 // your expo project appid
 appid=xxxx
+// server api
+EXPO_PUBLIC_API_URL
 ```
+
+Some documentation
+
+- [integrating-with-expo](https://viro-community.readme.io/docs/integrating-with-expo)
 
 ## Development
 
@@ -34,7 +40,14 @@ yarn ios
 
 ### Android
 
-- TODO
+- create a `.local.properties` in `android` folder
+
+add content as below:
+
+```conf
+ANDROID_HOME=your_android_path
+sdk.dir=your_android_path
+```
 
 ### IOS
 
