@@ -17,6 +17,9 @@
     "log:android": "react-native log-android",
     "log:ios": "react-native log-ios"
   },
+  "resolutions": {
+    "@viro-community/react-viro/@expo/config-plugins": "7.2.5"
+  },
   "dependencies": {
     "@feathersjs/feathers": "^5.0.21",
     "@feathersjs/socketio-client": "^5.0.21",

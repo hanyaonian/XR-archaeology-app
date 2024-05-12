@@ -14,8 +14,10 @@ function createClient(baseURL?: string) {
   }
   apiURL = baseHost + "/api";
 
+  const prefix = process.env.EXPO_PUBLIC_PREFIX || "";
+
   const socket = socketio(baseHost, {
-    path: "/api/socket.io",
+    path: `${prefix}/api/socket.io`,
     transports: ["websocket"],
     forceNew: true,
   });

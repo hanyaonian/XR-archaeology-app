@@ -13,8 +13,14 @@
 ```txt
 // your expo project appid
 appid=xxxx
+// for eas distribution
+developer=xxx
 // server api
 EXPO_PUBLIC_API_URL
+// for request routing
+EXPO_PUBLIC_PREFIX
+// system config
+JAVA_HOME
 ```
 
 Some documentation
@@ -40,13 +46,10 @@ yarn ios
 
 ### Android
 
-- create a `.local.properties` in `android` folder
+- local apk
 
-add content as below:
-
-```conf
-ANDROID_HOME=your_android_path
-sdk.dir=your_android_path
+```sh
+eas build -p android --profile preview --local
 ```
 
 ### IOS
@@ -75,8 +78,23 @@ If you want to run the app with a data base that already had data, please contac
 - types: declared or modified types in other packages
 - package.json: libraries
 
-## Package versions
+## Issues
 
-NOTE:
+- Package version:
+package: `expo-three-orbit-controls` on github is using outdated version of `three@0.108`. To solve the code conflict, an update is made by using `package-patch`.
 
-- package: `expo-three-orbit-controls` on github is using outdated version of `three@0.108`. To solve the code conflict, an update is made by using `package-patch`.
+- crashing:
+
+working on it
+
+- npx expo doctor errors:
+
+1. error: Expected package @expo/config-plugins@~7.2.2, Found invalid: @expo/config-plugins@7.9.2
+
+  in package.json
+
+  ```json
+    "resolutions": {
+      "@viro-community/react-viro/@expo/config-plugins": "7.2.5"
+    },
+  ```
