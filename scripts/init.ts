@@ -3,9 +3,9 @@ import fs from "fs/promises";
 import path from "path";
 
 const projectConfig = config();
-const { appid, developer } = projectConfig?.parsed ?? {};
+const { appid, slug, developer } = projectConfig?.parsed ?? {};
 
-if (!appid || !developer || projectConfig.error) {
+if (![appid, slug, developer].every(Boolean) || projectConfig.error) {
   throw new Error(".env or appid not found. Please follow readme file to start.");
 }
 
@@ -14,6 +14,12 @@ if (!appid || !developer || projectConfig.error) {
   const appJsonPath = path.resolve(process.cwd(), "app.json");
 
   const content = await fs.readFile(templateAppJsonPath, { encoding: "utf-8" });
-  await fs.writeFile(appJsonPath, content.replace("[PROJECT_ID]", appid).replace("[DEVELOPER]", developer));
-  console.log('DONE');
+  await fs.writeFile(
+    appJsonPath,
+    content
+      .replace("[PROJECT_ID]", appid)
+      .replace("[DEVELOPER]", developer)
+      .replace("[SLUG]", slug),
+  );
+  console.log("DONE");
 })();

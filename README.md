@@ -16,19 +16,17 @@ For better type annotation, typescript is recommended.
   - [Android]: <https://developer.android.com/codelabs/basic-android-kotlin-compose-connect-device#0>.
   - [iOS]: <https://getupdraft.com/blog/how-enable-ios-developer-mode-iphone-or-ipad>.
 - Create a `.env` file, including:
+  - `appid`, `developer`, `slug` for expo`s app.json 
+  - `EXPO_PUBLIC_API_URL`, `EXPO_PUBLIC_PREFIX` are for server connection (see remarks)
 
-```text
-// your expo project appid
-appid=xxxx
-// for eas distribution
-developer=xxx
-// server api
-EXPO_PUBLIC_API_URL
-// for request routing
-EXPO_PUBLIC_PREFIX
-// system config
-JAVA_HOME
-```
+    ```text
+    appid=xxxx
+    developer=xxx
+    slug=xxx
+
+    EXPO_PUBLIC_API_URL=xxx
+    EXPO_PUBLIC_PREFIX=xxx
+    ```
 
 Some documentation
 
@@ -41,21 +39,27 @@ Some documentation
 ```sh
 yarn 
 
+# init expo app.json
 yarn initapp
 
-# for simulator, see
-# https://docs.expo.dev/get-started/create-a-project/#open-the-app-on-your-device
-# Depends on your development environment, run for running on your mobile.
 yarn android
-# or
-yarn ios
 ```
+
+### IOS
+
+IOS simulator development is not supported because the AR function.
 
 ### Android
 
-- local apk
+Andorid simulator development is not supported because the AR function.
+
+- build a standalone apk
 
 ```sh
+# build a package via expo internal distribution
+yarn build:android
+
+# in local
 eas build -p android --profile preview --local
 ```
 
@@ -66,6 +70,8 @@ eas build -p android --profile preview --local
 - `yarn start` has been duplicated by the `yarn android` and `yarn ios` because ViroReact does not support Expo Go client.
 
 - if you are developing using Android, after running `yarn clean`, please rollback the Android Linking of ViroReact in `android` directory, by the [ViroReact Installation Instructions](https://viro-community.readme.io/docs/installation-instructions), or using source controls in Git to revert the changes in `android` directory.
+
+- using http request in standalone app, use [usesCleartextTraffic](https://docs.expo.dev/versions/latest/sdk/build-properties/) in eas.json, but it's not recommended
 
 ## Folder structure
 
