@@ -12,6 +12,7 @@ import { useEffect, useRef, useState } from "react";
 import { Alert, ImageBackground, ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
 import { Button, Text } from "react-native-paper";
 import * as ExpoLocation from "expo-location";
+import { Pages } from "@/app/composable/routes";
 
 export default function Page() {
   const feathers = useFeathers();
@@ -89,15 +90,19 @@ export default function Page() {
   async function startARTour(index?: number) {
     index ??= 0;
     const ids = points.map(({ _id }) => _id);
-    const goTo = () => router.push({ pathname: "/ar_explore", params: { service: "locations", targetId: index, idString: JSON.stringify(ids) } });
-    const { coords: position } = await ExpoLocation.getCurrentPositionAsync();
-    if (distanceFromLatLonInKm(position, points[index]) > 5) {
-      Alert.alert("> 5km Distance Alert", "You're too far from the destination.\nDo you still want to proceed with the AR tour?", [
-        { text: "Cancel", style: "cancel" },
-        { text: "Confirm", onPress: goTo },
-      ]);
-    } else {
-      goTo();
+    const goTo = () => router.push({ pathname: Pages.ArExplore, params: { service: "locations", targetId: index, idString: JSON.stringify(ids) } });
+    try {
+      const { coords: position } = await ExpoLocation.getCurrentPositionAsync();
+      if (distanceFromLatLonInKm(position, points[index]) > 5) {
+        Alert.alert("> 5km Distance Alert", "You're too far from the destination.\nDo you still want to proceed with the AR tour?", [
+          { text: "Cancel", style: "cancel" },
+          { text: "Confirm", onPress: goTo },
+        ]);
+      } else {
+        goTo();
+      }
+    } catch (err) {
+      Alert.alert("Get Current Location Error", err.message, [ { text: "Ok", style: "cancel" }, ])
     }
   }
 

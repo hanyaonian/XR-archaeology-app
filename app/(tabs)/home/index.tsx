@@ -6,6 +6,8 @@ import { AppTheme, useAppTheme } from "@providers/style_provider";
 import { useAuth } from "@providers/auth_provider";
 import { Link, router } from "expo-router";
 import { Orientation, isPortrait, useOrientation } from "@/plugins/orientation";
+import { vedi_point } from "@/app/composable/ar";
+import { Pages } from "@/app/composable/routes";
 
 const DECORATE_BOX_HEIGHT = 124;
 const MAP_IMG_HEIGHT = 303;
@@ -144,14 +146,14 @@ export default function Home() {
                   textColor={theme.colors.textOnPrimary}
                   mode="contained"
                   style={{ borderRadius: theme.spacing.xs }}
-                  onPress={() => router.push("/login")}
+                  onPress={() => router.push(Pages.Login)}
                 >
                   Login
                 </Button>
                 <Button
                   mode="outlined"
                   style={{ borderRadius: theme.spacing.xs, borderColor: theme.colors.primary, borderWidth: 2 }}
-                  onPress={() => router.push("/register")}
+                  onPress={() => router.push(Pages.Register)}
                 >
                   Sign up
                 </Button>
@@ -174,7 +176,9 @@ export default function Home() {
             ...[isPortrait(orientation) ? {} : { minHeight: Math.round(MAP_IMG_HEIGHT * (screenWidth / MAP_IMG_WIDTH)) }],
           ]}
         >
-          <Image source={require("@assets/images/vedi_map.jpeg")} style={{ width: "100%", height: "100%" }} />
+          <Pressable onPress={() => router.replace({ pathname: "/map", params: { latitude: vedi_point.latitude, longitude: vedi_point.longitude } })}>
+            <Image source={require("@assets/images/vedi_map.jpeg")} style={{ width: "100%", height: "100%" }} />
+          </Pressable>
           <View style={{ position: "absolute", top: theme.spacing.md, right: theme.spacing.sm }}>
             <Text variant="titleMedium" style={style.mapLabel}>
               Map of Valley

@@ -12,6 +12,7 @@ import { useAppTheme } from "@providers/style_provider";
 import { Paginated, useFeathers } from "@/providers/feathers_provider";
 import { Location, Route } from "@/models";
 import { getCurrentPositionAsync } from "expo-location";
+import { vedi_point } from "@/app/composable/ar";
 
 const ITEM_WIDTH = 300;
 const ITEM_SPACING = 10;
@@ -25,8 +26,8 @@ export default function Explore() {
   const [route, setRoute] = useState<Route>();
 
   const initPoint = {
-    latitude: !!latitude ? Number(latitude) : 39.92634215565024,
-    longitude: !!longitude ? Number(longitude) : 44.74058628178656,
+    latitude: !!latitude ? Number(latitude) : vedi_point.latitude,
+    longitude: !!longitude ? Number(longitude) : vedi_point.longitude,
   };
   const [loaded, setLoaded] = useState(false);
 

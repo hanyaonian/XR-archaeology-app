@@ -61,14 +61,18 @@ export default function ExploreModal({ open, setOpen, data, targetIndex = 0 }: E
         },
       });
     };
-    const { coords: position } = await ExpoLocation.getCurrentPositionAsync();
-    if (distanceFromLatLonInKm(position, point) > 5) {
-      Alert.alert("> 5km Distance Alert", "You're too far from the destination.\nDo you still want to proceed with the AR tour?", [
-        { text: "Cancel", style: "cancel" },
-        { text: "Confirm", onPress: goTo },
-      ]);
-    } else {
-      goTo();
+    try {
+      const { coords: position } = await ExpoLocation.getCurrentPositionAsync();
+      if (distanceFromLatLonInKm(position, point) > 5) {
+        Alert.alert("> 5km Distance Alert", "You're too far from the destination.\nDo you still want to proceed with the AR tour?", [
+          { text: "Cancel", style: "cancel" },
+          { text: "Confirm", onPress: goTo },
+        ]);
+      } else {
+        goTo();
+      }
+    } catch (err) {
+      Alert.alert("Get Current Location Error", err.message, [ { text: "Ok", style: "cancel" }, ])
     }
   }
 

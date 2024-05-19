@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import * as Location from "expo-location";
 import { Alert, Linking, Platform } from "react-native";
 import * as IntentLauncher from "expo-intent-launcher";
+import { Pages } from "./composable/routes";
 
 export default function App() {
   const rootNav = useRootNavigation();
@@ -21,7 +22,7 @@ export default function App() {
   useEffect(() => {
     if (!isNavReady) return;
 
-    router.replace("/home");
+    router.replace(Pages.Home);
   }, [isNavReady]);
 
   useEffect(() => {

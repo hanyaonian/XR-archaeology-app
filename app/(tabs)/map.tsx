@@ -13,6 +13,8 @@ import { Paginated, useFeathers } from "@/providers/feathers_provider";
 import { AttractionType, GeoPoint } from "@/models";
 import { getCurrentPositionAsync } from "expo-location";
 import { Button, Text } from "react-native-paper";
+import { vedi_point } from "../composable/ar";
+import { Pages } from "../composable/routes";
 
 const ITEM_WIDTH = 300;
 const ITEM_SPACING = 10;
@@ -29,8 +31,8 @@ export default function Explore() {
   const filteredPoints = useMemo(() => (selectedType ? points.filter((point) => point.type === selectedType) : points), [selectedType, points]);
 
   const initPoint = {
-    latitude: !!latitude ? Number(latitude) : 39.92634215565024,
-    longitude: !!longitude ? Number(longitude) : 44.74058628178656,
+    latitude: !!latitude ? Number(latitude) : vedi_point.latitude,
+    longitude: !!longitude ? Number(longitude) : vedi_point.longitude,
   };
   const [loaded, setLoaded] = useState(false);
 
@@ -234,7 +236,7 @@ export default function Explore() {
               icon="createAR"
               iconProps={{ fill: theme.colors.text }}
               onPress={() => {
-                router.push("/ar_explore");
+                router.push(Pages.ArExplore);
               }}
             />
           )}

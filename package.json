@@ -34,6 +34,7 @@
     "@viro-community/react-viro": "^2.23.1",
     "expo": "^49.0.0",
     "expo-av": "~13.4.1",
+    "expo-build-properties": "~0.8.3",
     "expo-doctor": "^1.5.0",
     "expo-file-system": "~15.4.4",
     "expo-font": "~11.4.0",

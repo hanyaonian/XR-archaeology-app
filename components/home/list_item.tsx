@@ -7,6 +7,7 @@ import { Text, TouchableRipple } from "react-native-paper";
 import IconBtn from "../icon_btn";
 import { Href } from "expo-router/build/link/href";
 import { Tag } from "@/models";
+import { Pages } from "@/app/composable/routes";
 
 export interface Props {
   name: string;
@@ -43,7 +44,7 @@ export default function ListItem({ name, briefDesc, images, href, showNavigate, 
           iconProps={{ fill: theme.colors.text }}
           onPress={() =>
             router.replace({
-              pathname: "/map",
+              pathname: Pages.Map,
               params: { latitude, longitude },
             })
           }

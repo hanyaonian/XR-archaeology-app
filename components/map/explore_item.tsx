@@ -6,6 +6,7 @@ import { useRouter } from "expo-router";
 import { GeoPoint, Tag } from "@/models";
 import { distanceFromLatLonInKm } from "@/plugins/geolocation";
 import * as ExpoLocation from "expo-location";
+import { Pages } from "@/app/composable/routes";
 
 /**
  * @property {T[]} points is a list of locations in which the target point exits.
@@ -64,22 +65,27 @@ export default function ExploreItem<T extends GeoPoint>(item: ItemProps<T>) {
     const ids = points.map(({ _id }) => _id);
     const goTo = () =>
       router.push({
-        pathname: "/ar_explore",
+        pathname: Pages.ArExplore,
         params: {
           idString: JSON.stringify(ids),
           targetId: targetIndex,
           service: isAttraction ? "attractions" : "locations",
         },
       });
-    const { coords: position } = await ExpoLocation.getCurrentPositionAsync();
-    if (distanceFromLatLonInKm(position, point) > 5) {
-      Alert.alert("> 5km Distance Alert", "You're too far from the destination.\nDo you still want to proceed with the AR tour?", [
-        { text: "Cancel", style: "cancel" },
-        { text: "Confirm", onPress: goTo },
-      ]);
-    } else {
-      goTo();
-    }
+
+      try {
+        const { coords: position } = await ExpoLocation.getCurrentPositionAsync();
+        if (distanceFromLatLonInKm(position, point) > 5) {
+          Alert.alert("> 5km Distance Alert", "You're too far from the destination.\nDo you still want to proceed with the AR tour?", [
+            { text: "Cancel", style: "cancel" },
+            { text: "Confirm", onPress: goTo },
+          ]);
+        } else {
+          goTo();
+        }
+      } catch (err) {
+        Alert.alert("Get Current Location Error", err.message, [ { text: "Ok", style: "cancel" }, ])
+      }
   };
 
   return (

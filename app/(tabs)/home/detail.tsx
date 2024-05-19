@@ -12,6 +12,7 @@ import { Button, Text } from "react-native-paper";
 import * as Location from "expo-location";
 import { distanceFromLatLonInKm } from "@/plugins/geolocation";
 import { LatLng } from "react-native-maps";
+import { Pages } from "@/app/composable/routes";
 
 export default function Page() {
   const feathers = useFeathers();
@@ -45,15 +46,19 @@ export default function Page() {
 
   async function startARTour() {
     if (canNavigate) {
-      const goTo = () => router.push({ pathname: "/ar_explore", params: { service, idString: JSON.stringify([item._id]) } });
-      const { coords: position } = await Location.getCurrentPositionAsync();
-      if (distanceFromLatLonInKm(position, item as LatLng) > 5) {
-        Alert.alert("> 5km Distance Alert", "You're too far from the destination.\nDo you still want to proceed with the AR tour?", [
-          { text: "Cancel", style: "cancel" },
-          { text: "Confirm", onPress: goTo },
-        ]);
-      } else {
-        goTo();
+      const goTo = () => router.push({ pathname: Pages.ArExplore, params: { service, idString: JSON.stringify([item._id]) } });
+      try {
+        const { coords: position } = await Location.getCurrentPositionAsync();
+        if (distanceFromLatLonInKm(position, item as LatLng) > 5) {
+          Alert.alert("> 5km Distance Alert", "You're too far from the destination.\nDo you still want to proceed with the AR tour?", [
+            { text: "Cancel", style: "cancel" },
+            { text: "Confirm", onPress: goTo },
+          ]);
+        } else {
+          goTo();
+        }
+      } catch (err) {
+        Alert.alert("Get Current Location Error", err.message, [ { text: "Ok", style: "cancel" }, ])
       }
     }
   }
@@ -120,7 +125,7 @@ export default function Page() {
               >
                 <Button
                   mode="contained"
-                  onPress={() => router.replace({ pathname: "/map", params: { latitude: item.latitude, longitude: item.longitude } })}
+                  onPress={() => router.replace({ pathname: Pages.Map, params: { latitude: item.latitude, longitude: item.longitude } })}
                   textColor={theme.colors.textOnPrimary}
                   style={{ borderRadius: theme.borderRadius.xs }}
                   icon={() => <LocationIcon fill={theme.colors.textOnPrimary} size={20} />}
