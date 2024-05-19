@@ -7,7 +7,7 @@ import _ from "lodash";
 import { useAuth } from "@providers/auth_provider";
 import { useAppTheme, AppTheme } from "@providers/style_provider";
 import * as rules from "@/plugins/rules";
-import { Pages } from "../composable/routes";
+import { Routes } from "../composable/routes";
 
 export default function LoginPage() {
   const { theme } = useAppTheme();
@@ -98,7 +98,7 @@ export default function LoginPage() {
           </Text>
           <Button
             mode="text"
-            onPress={() => router.push(Pages.Register)}
+            onPress={() => router.push(Routes.Register)}
             style={{ borderRadius: 4, borderColor: theme.colors.primary }}
             loading={loading}
             disabled={loading}

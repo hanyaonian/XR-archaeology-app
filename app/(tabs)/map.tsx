@@ -14,7 +14,7 @@ import { AttractionType, GeoPoint } from "@/models";
 import { getCurrentPositionAsync } from "expo-location";
 import { Button, Text } from "react-native-paper";
 import { vedi_point } from "../composable/ar";
-import { Pages } from "../composable/routes";
+import { Routes } from "../composable/routes";
 
 const ITEM_WIDTH = 300;
 const ITEM_SPACING = 10;
@@ -236,7 +236,7 @@ export default function Explore() {
               icon="createAR"
               iconProps={{ fill: theme.colors.text }}
               onPress={() => {
-                router.push(Pages.ArExplore);
+                router.push(Routes.ArExplore);
               }}
             />
           )}

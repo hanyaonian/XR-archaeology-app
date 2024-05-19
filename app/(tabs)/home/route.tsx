@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from "react";
 import { Alert, ImageBackground, ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
 import { Button, Text } from "react-native-paper";
 import * as ExpoLocation from "expo-location";
-import { Pages } from "@/app/composable/routes";
+import { Routes } from "@/app/composable/routes";
 
 export default function Page() {
   const feathers = useFeathers();
@@ -90,7 +90,7 @@ export default function Page() {
   async function startARTour(index?: number) {
     index ??= 0;
     const ids = points.map(({ _id }) => _id);
-    const goTo = () => router.push({ pathname: Pages.ArExplore, params: { service: "locations", targetId: index, idString: JSON.stringify(ids) } });
+    const goTo = () => router.push({ pathname: Routes.ArExplore, params: { service: "locations", targetId: index, idString: JSON.stringify(ids) } });
     try {
       const { coords: position } = await ExpoLocation.getCurrentPositionAsync();
       if (distanceFromLatLonInKm(position, points[index]) > 5) {
@@ -183,7 +183,7 @@ export default function Page() {
                   mode="contained"
                   onPress={() =>
                     router.push({
-                      pathname: "/home/route_map",
+                      pathname: Routes.RouteMap,
                       params: { latitude: points[0].latitude, longitude: points[0].longitude, routeId: route._id },
                     })
                   }

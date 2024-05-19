@@ -11,7 +11,7 @@ import { useAuth } from "@providers/auth_provider";
 import { useFeathers } from "@providers/feathers_provider";
 import _ from "lodash";
 import { useAppTheme } from "@providers/style_provider";
-import { Pages } from "./composable/routes";
+import { Routes } from "./composable/routes";
 
 export default function DetailPage() {
   const { theme } = useAppTheme();
@@ -141,7 +141,7 @@ export default function DetailPage() {
               icon={<CreateARIcon fill={theme.colors.grey1} />}
               disabled={loading}
               onPress={() => {
-                loading ? null : router.push(Pages.ArPlacement);
+                loading ? null : router.push(Routes.ArPlacement);
               }}
             />
           </View>

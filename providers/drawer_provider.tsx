@@ -8,7 +8,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-na
 import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "./auth_provider";
 import { useAppTheme, AppTheme } from "./style_provider";
-import { Pages } from "@/app/composable/routes";
+import { Routes } from "@/app/composable/routes";
 
 interface DrawerContext {
   open: boolean;
@@ -51,7 +51,7 @@ export const DrawerProvider = ({ children }: { children: JSX.Element | JSX.Eleme
     if (authenticated) {
       await logout();
     } else {
-      router.replace(Pages.Login);
+      router.replace(Routes.Login);
     }
   };
 
@@ -72,7 +72,7 @@ export const DrawerProvider = ({ children }: { children: JSX.Element | JSX.Eleme
                 <Drawer.Item
                   label="Profile"
                   onPress={() => {
-                    router.push(Pages.Profile);
+                    router.push(Routes.Profile);
                   }}
                 />
                 <Drawer.Item label="Settings" />

@@ -6,7 +6,7 @@ import { useRouter } from "expo-router";
 import { GeoPoint, Tag } from "@/models";
 import { distanceFromLatLonInKm } from "@/plugins/geolocation";
 import * as ExpoLocation from "expo-location";
-import { Pages } from "@/app/composable/routes";
+import { Routes } from "@/app/composable/routes";
 
 /**
  * @property {T[]} points is a list of locations in which the target point exits.
@@ -65,7 +65,7 @@ export default function ExploreItem<T extends GeoPoint>(item: ItemProps<T>) {
     const ids = points.map(({ _id }) => _id);
     const goTo = () =>
       router.push({
-        pathname: Pages.ArExplore,
+        pathname: Routes.ArExplore,
         params: {
           idString: JSON.stringify(ids),
           targetId: targetIndex,

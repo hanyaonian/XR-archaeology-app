@@ -123,6 +123,9 @@ export function ARLocationProvider({ children }: Props) {
             lastUpdateTimeStamp.current = now;
             console.log(now, "force update:", coords.accuracy);
           }
+        } else {
+          setLocation(coords);
+          lastUpdateTimeStamp.current = now;
         }
       });
     };

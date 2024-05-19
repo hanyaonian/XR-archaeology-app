@@ -1,4 +1,4 @@
-import { Pages } from "@/app/composable/routes";
+import { Routes } from "@/app/composable/routes";
 import { AccountListItem, MainBody } from "@/components";
 import { useAuth } from "@/providers/auth_provider";
 import { useAppTheme, AppTheme } from "@/providers/style_provider";
@@ -46,8 +46,8 @@ export default function SettingsPage() {
           )}
         </View>
         <View style={{ padding: theme.spacing.lg, gap: theme.spacing.md }}>
-          {authenticated && <AccountListItem label="Profile" prefix="profile" onPress={() => router.push(Pages.Profile)} />}
-          <AccountListItem label="Settings" prefix="setting" onPress={() => router.push(Pages.Settings)} />
+          {authenticated && <AccountListItem label="Profile" prefix="profile" onPress={() => router.push(Routes.Profile)} />}
+          <AccountListItem label="Settings" prefix="setting" onPress={() => router.push(Routes.Settings)} />
           <AccountListItem label="Help and feedback" prefix="help" />
         </View>
         <View style={{ padding: theme.spacing.lg }}>

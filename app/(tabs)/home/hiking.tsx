@@ -1,3 +1,4 @@
+import { Routes } from "@/app/composable/routes";
 import { Route } from "@/models";
 import { Paginated, useFeathers } from "@/providers/feathers_provider";
 import { useAppTheme } from "@/providers/style_provider";
@@ -75,7 +76,7 @@ export default function Page() {
             briefDesc: item.briefDesc,
             images: item.thumbnails,
             href: {
-              pathname: "/home/route",
+              pathname: Routes.Route,
               params: { id: item._id },
             },
           };

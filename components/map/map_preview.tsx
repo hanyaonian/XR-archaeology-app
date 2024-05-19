@@ -7,7 +7,7 @@ import { Platform, StyleProp, View, ViewStyle } from "react-native";
 import MapView, { LatLng, MapType, Marker, Region } from "react-native-maps";
 import ArrowLine from "./arrow_line";
 import { vedi_point } from "@/app/composable/ar";
-import { Pages } from "@/app/composable/routes";
+import { Routes } from "@/app/composable/routes";
 
 export interface Props {
   points: GeoPoint[];
@@ -53,12 +53,12 @@ export default function MapPreview({ points, style, onMapPress, initialRegion, m
 
               if (points?.[0]?.route) {
                 params = { ...params, routeId: points?.[0].route };
-                router.push({ pathname: Pages.RouteMap, params: params });
+                router.push({ pathname: Routes.RouteMap, params: params });
                 return;
               }
             }
 
-            router.replace({ pathname: Pages.Map, params: params });
+            router.replace({ pathname: Routes.Map, params: params });
           }
         }}
         onRegionChangeComplete={(region) => {
@@ -98,14 +98,14 @@ export default function MapPreview({ points, style, onMapPress, initialRegion, m
               let params = { latitude: point.latitude, longitude: point.longitude };
               if (point?.route) {
                 router.push({
-                  pathname: Pages.RouteMap,
+                  pathname: Routes.RouteMap,
                   params: {
                     ...params,
                     routeId: point?.route,
                   },
                 });
               } else {
-                router.replace({ pathname: Pages.Map, params });
+                router.replace({ pathname: Routes.Map, params });
               }
             }}
             zIndex={10}

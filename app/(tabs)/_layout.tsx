@@ -1,6 +1,7 @@
 import { NavBar } from "@components";
 import { Tabs } from "expo-router/tabs";
 import { HomeIcon, ExploreIcon, SettingIcon } from "@components/icons";
+import { Routes } from "../composable/routes";
 
 export default function TabLayout() {
   return (
@@ -15,7 +16,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="home"
         options={{
-          href: "/home",
+          href: Routes.Home,
           tabBarLabel: "Home",
           tabBarIcon: ({ color, size }) => <HomeIcon fill={color} size={size} />,
         }}
@@ -23,7 +24,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="map"
         options={{
-          href: "/map",
+          href: Routes.Map,
           tabBarLabel: "Map",
           tabBarIcon: ({ color, size }) => <ExploreIcon fill={color} size={size} />,
         }}
@@ -31,7 +32,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="account"
         options={{
-          href: "/account",
+          href: Routes.Account,
           tabBarLabel: "Account",
           tabBarIcon: ({ color, size }) => <SettingIcon fill={color} size={size} />,
         }}

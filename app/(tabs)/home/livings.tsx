@@ -1,3 +1,4 @@
+import { Routes } from "@/app/composable/routes";
 import { AppBar, ListItem, ListItemProps, MainBody, NAVBAR_HEIGHT } from "@/components";
 import { Attraction, OpenHour, Weekday } from "@/models";
 import { Paginated, useFeathers } from "@/providers/feathers_provider";
@@ -98,7 +99,7 @@ export default function Page() {
           <Text variant="titleMedium" style={style.title}>
             Culinary Delights
           </Text>
-          <Link href={{ pathname: "/home/attractions", params: { type: "Restaurant" } }} asChild>
+          <Link href={{ pathname: Routes.Attractions, params: { type: "Restaurant" } }} asChild>
             <Pressable style={style.button}>
               <Text variant="labelMedium" style={{ color: theme.colors.grey3 }}>
                 view all
@@ -121,7 +122,7 @@ export default function Page() {
                 latitude: item.latitude,
                 longitude: item.latitude,
                 images: item.thumbnails,
-                href: { pathname: "/home/detail", params: { id: item._id, service: "attractions" } },
+                href: { pathname: Routes.Detail, params: { id: item._id, service: "attractions" } },
               };
               return <ListItem {...props} key={item._id} />;
             })}
@@ -131,7 +132,7 @@ export default function Page() {
           <Text variant="titleMedium" style={style.title}>
             Lodgings
           </Text>
-          <Link href={{ pathname: "/home/attractions", params: { type: "Lodging" } }} asChild>
+          <Link href={{ pathname: Routes.Attractions, params: { type: "Lodging" } }} asChild>
             <Pressable style={style.button}>
               <Text variant="labelMedium" style={{ color: theme.colors.grey3 }}>
                 view all
@@ -149,7 +150,7 @@ export default function Page() {
                 latitude: item.latitude,
                 longitude: item.latitude,
                 images: item.thumbnails,
-                href: { pathname: "/home/detail", params: { id: item._id, service: "attractions" } },
+                href: { pathname: Routes.Detail, params: { id: item._id, service: "attractions" } },
               };
               return <ListItem {...props} key={item._id} />;
             })}

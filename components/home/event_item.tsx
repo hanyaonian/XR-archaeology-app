@@ -5,6 +5,7 @@ import { Link } from "expo-router";
 import moment from "moment";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
+import { Routes } from "@/app/composable/routes";
 
 const IMAGE_WIDTH = 120;
 const LABEL_WIDTH = 64;
@@ -29,7 +30,7 @@ export default function EventItem({ _id, name, briefDesc, images, startDate, end
   }
 
   return (
-    <Link href={{ pathname: "/home/event", params: { id: _id } }} asChild>
+    <Link href={{ pathname: Routes.Event, params: { id: _id } }} asChild>
       <Pressable>
         <View style={style.card}>
           {image ? (

@@ -12,7 +12,7 @@ import { Button, Text } from "react-native-paper";
 import * as Location from "expo-location";
 import { distanceFromLatLonInKm } from "@/plugins/geolocation";
 import { LatLng } from "react-native-maps";
-import { Pages } from "@/app/composable/routes";
+import { Routes } from "@/app/composable/routes";
 
 export default function Page() {
   const feathers = useFeathers();
@@ -46,7 +46,7 @@ export default function Page() {
 
   async function startARTour() {
     if (canNavigate) {
-      const goTo = () => router.push({ pathname: Pages.ArExplore, params: { service, idString: JSON.stringify([item._id]) } });
+      const goTo = () => router.push({ pathname: Routes.ArExplore, params: { service, idString: JSON.stringify([item._id]) } });
       try {
         const { coords: position } = await Location.getCurrentPositionAsync();
         if (distanceFromLatLonInKm(position, item as LatLng) > 5) {
@@ -125,7 +125,7 @@ export default function Page() {
               >
                 <Button
                   mode="contained"
-                  onPress={() => router.replace({ pathname: Pages.Map, params: { latitude: item.latitude, longitude: item.longitude } })}
+                  onPress={() => router.replace({ pathname: Routes.Map, params: { latitude: item.latitude, longitude: item.longitude } })}
                   textColor={theme.colors.textOnPrimary}
                   style={{ borderRadius: theme.borderRadius.xs }}
                   icon={() => <LocationIcon fill={theme.colors.textOnPrimary} size={20} />}
