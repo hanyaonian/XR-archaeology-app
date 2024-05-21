@@ -1,5 +1,5 @@
 import { Button, Text } from "react-native-paper";
-import { MainBody, NAVBAR_HEIGHT } from "@components";
+import { IconBtn, MainBody, NAVBAR_HEIGHT } from "@components";
 import { View, StyleSheet, ImageBackground, useWindowDimensions, Pressable, ScrollView, Image } from "react-native";
 import { useState } from "react";
 import { AppTheme, useAppTheme } from "@providers/style_provider";
@@ -47,10 +47,23 @@ export default function Home() {
           }}
         />
         <View style={style.appBarDecorateBox} />
-        <View style={{ flexDirection: "column", paddingTop: theme.spacing.md, paddingBottom: theme.spacing.xs, paddingHorizontal: theme.spacing.lg }}>
+        <View style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          paddingTop: theme.spacing.md,
+          paddingBottom: theme.spacing.xs,
+          paddingHorizontal: theme.spacing.lg
+        }}>
           <Text variant="titleMedium" style={{ color: theme.colors.background }}>
             {`Welcome to \nthe Vedi River Valley!`}
           </Text>
+
+          <IconBtn
+            icon="createAR"
+            iconProps={{ fill: theme.colors.text }}
+            onPress={() => {
+              router.push(Routes.ArWall);
+            }} />
         </View>
 
         {/* Top Section */}
@@ -90,7 +103,7 @@ export default function Home() {
                 </ImageBackground>
               </Pressable>
             </Link>
-            <Link href="/home/livings" asChild>
+            <Link href={Routes.Living} asChild>
               <Pressable style={style.subThumbContainer}>
                 <ImageBackground source={require("@assets/images/food.png")} imageStyle={style.image}>
                   <View style={style.subThumb}>
@@ -101,7 +114,7 @@ export default function Home() {
                 </ImageBackground>
               </Pressable>
             </Link>
-            <Link href="/home/hiking" asChild>
+            <Link href={Routes.Hiking} asChild>
               <Pressable style={style.subThumbContainer}>
                 <ImageBackground source={require("@assets/images/hiking.jpg")} imageStyle={style.image}>
                   <View style={style.subThumb}>
@@ -112,7 +125,7 @@ export default function Home() {
                 </ImageBackground>
               </Pressable>
             </Link>
-            <Link href="/home/events" asChild>
+            <Link href={Routes.Events} asChild>
               <Pressable style={style.subThumbContainer}>
                 <ImageBackground source={require("@assets/images/events.png")} imageStyle={style.image}>
                   <View style={style.subThumb}>

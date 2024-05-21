@@ -47,7 +47,7 @@ export default function App() {
     })();
   }, []);
 
-  if (isNavReady) return <Redirect href="/home" />;
+  if (isNavReady) return <Redirect href={Routes.Home} />;
   else
     return (
       <MainBody>

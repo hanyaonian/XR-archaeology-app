@@ -1,7 +1,5 @@
 export enum Routes {
   Detail = '/home/detail',
-  ArPlacement = '/ar_placement',
-  ArExplore = '/ar_explore',
   Attractions = '/home/attractions',
   Event = 'home/event',
   Map = '/map',
@@ -13,6 +11,16 @@ export enum Routes {
   Account = '/account',
   Profile = '/account/profile',
   Settings = '/account/settings',
+
+  // list views
+  Living = "/home/livings",
+  Hiking = "/home/hiking",
+  Events = "/home/events",
+
+  // AR - for wall
+  ArWall = '/ar/ar_test',
+  ArPlacement = '/ar/ar_placement',
+  ArExplore = '/ar/ar_explore',
 }
 
 export enum Service { }
