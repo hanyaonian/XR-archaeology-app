@@ -2,18 +2,23 @@ import { useState } from "react";
 import {
   ViroARScene,
   ViroARTrackingTargets,
-  ViroARImageMarker,
+  ViroPlaneUpdatedMap,
+  ViroARPlaneSelector,
   ViroAmbientLight,
   ViroARSceneNavigator,
   ViroText,
   Viro3DObject,
   ViroPolyline,
   ViroMaterials,
+  ViroNode,
+  ViroARCamera,
+  ViroButton,
 } from "@viro-community/react-viro";
-// import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
+import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
 
 export default function ARTest() {
-  return <ViroARSceneNavigator initialScene={{ scene: TestScene }}></ViroARSceneNavigator>;
+  // @ts-ignore
+  return <ViroARSceneNavigator initialScene={{ scene: GuideScene }} />;
 }
 
 function PolyLines() {
@@ -69,38 +74,52 @@ function PolyLines() {
   );
 }
 
-function TestScene() {
-  const [status, setStatus] = useState<string>("Seeking");
-  const [model_status, setModelStatus] = useState<string>("Unload");
-
-  const onAnchorFound = () => {
-    setStatus("Anchor found");
+function GuideScene() {
+  const placeWall = (...args: any[]) => {
+    console.warn(args);
+    setWallStatus(true);
   };
 
-  ViroARTrackingTargets.createTargets({
-    logo: {
-      source: require("@/assets/models/demo/logo.jpeg"),
-      orientation: "Up",
-      // real world width in meters
-      physicalWidth: 0.165,
-    },
-  });
+  const [wallPlaceStatus, setWallStatus] = useState<boolean>(false);
+  const [model_position, setModelPostion] = useState<Viro3DPoint>([10, -12, -50]);
 
   return (
     <ViroARScene>
-      <PolyLines />
-      <ViroText text={status} position={[3, 0, 2]}></ViroText>
-      <ViroText text={model_status} position={[3, 1, 2]}></ViroText>
       <ViroAmbientLight color="#ffffff" intensity={200} />
-      <ViroARImageMarker target={"logo"} onAnchorFound={onAnchorFound}>
-        <Viro3DObject
-          onLoadEnd={() => setModelStatus("model loaded")}
-          source={require("@assets/models/demo/Walls_21052024.obj")}
-          resources={[require("@assets/models/demo/Walls_21052024.mtl")]}
-          type="OBJ"
-          scale={[0.1, 0.1, 0.1]}
+      <ViroARCamera>
+        <ViroText
+          text="Place the wall"
+          position={[0, 0, -1]}
+          transformBehaviors={"billboard"}
+          scale={[0.4, 0.4, 0.4]}
+          style={{ fontFamily: "Arial", color: "white" }}
         />
-      </ViroARImageMarker>
+        <Viro3DObject
+          source={require("@assets/models/wall/arrow.obj")}
+          position={[0, 0, -10]}
+          rotation={[90, 0, 90]}
+          scale={[0.05, 0.05, 0.05]}
+          type="OBJ"
+        />
+        <Viro3DObject
+          source={require("@assets/models/wall/wall1.glb")}
+          rotation={[90, 65, 90]}
+          position={model_position}
+          scale={[0.2, 0.2, 0.2]}
+          type="GLB"
+          onDrag={(pos) => {
+            console.warn(pos);
+          }}
+        />
+        <ViroButton
+          position={[0, -0.5, -1]}
+          scale={[0.1, 0.1, 0.1]}
+          source={require("@assets/images/play.png")}
+          onClick={placeWall}
+          height={2}
+          width={3}
+        ></ViroButton>
+      </ViroARCamera>
     </ViroARScene>
   );
 }
