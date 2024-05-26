@@ -1,125 +1,176 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
 import {
   ViroARScene,
-  ViroARTrackingTargets,
-  ViroPlaneUpdatedMap,
-  ViroARPlaneSelector,
   ViroAmbientLight,
   ViroARSceneNavigator,
   ViroText,
   Viro3DObject,
-  ViroPolyline,
-  ViroMaterials,
-  ViroNode,
   ViroARCamera,
-  ViroButton,
+  ViroCameraTransform,
 } from "@viro-community/react-viro";
-import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
+import { useAppTheme } from "@providers/style_provider";
+import * as ScreenOrientation from "expo-screen-orientation";
+import { IconBtn, MainBody } from "@/components";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ChevronLeftIcon } from "@/components/icons";
+import { router } from "expo-router";
+import { ControlBar, Direction } from './bar';
+import { Viro3DPoint, ViroRotation } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
 
-export default function ARTest() {
-  // @ts-ignore
-  return <ViroARSceneNavigator initialScene={{ scene: GuideScene }} />;
-}
+const DISTANCE = 100;
 
-function PolyLines() {
-  ViroMaterials.createMaterials({
-    red: {
-      diffuseColor: "rgba(255, 0, 0, 1)",
-    },
-    green: {
-      diffuseColor: "rgba(0, 255, 0, 1)",
-    },
-    blue: {
-      diffuseColor: "rgba(0, 0, 255, 1)",
-    },
-  });
+function GuideScene() {
+  const placeWall = () => {
+    setLock(true);
+    setHint('Justify it...');
+  };
+
+  const updateCameraPosition = (cameraTransform: ViroCameraTransform) => {
+    if (lock) {
+      return;
+    }
+    const { forward, rotation } = cameraTransform;
+    const [ x, y, z ] = forward;
+    const [ rx, ry, rz ] = rotation;
+    setModelPosition([x * DISTANCE, y* DISTANCE - 10 , z* DISTANCE])
+  }
+
+  const  changePosition = (params:{ direction: Direction }) => {
+    const [x, y, z] = modelPosition;
+    const { direction } = params;
+    switch (direction) {
+      case 'down': {
+        setModelPosition([x, y - 1, z]);
+        break;
+      }
+      case 'up': {
+        setModelPosition([x, y + 1, z]);
+        break;
+      }
+      case 'right': {
+        setModelPosition([x + 1, y , z]);
+        break;
+      }
+      case 'left': {
+        setModelPosition([x - 1, y, z]);
+        break;
+      }
+    }
+  }
+
+  const changeRotation = (params:{ direction: Direction }) => {
+    const [x, y, z] = modelRotation;
+    const { direction } = params;
+    switch (direction) {
+      case 'down': {
+        setModelRotation([x, y - 1, z]);
+        break;
+      }
+      case 'up': {
+        setModelRotation([x, y + 1, z]);
+        break;
+      }
+      case 'right': {
+        setModelRotation([x + 1, y , z]);
+        break;
+      }
+      case 'left': {
+        setModelRotation([x - 1, y, z]);
+        break;
+      }
+    }
+  }
+
+  const [hint, setHint] = useState<string>('Press to place the wall');
+  const [lock, setLock] = useState<boolean>(false);
+  const [modelRotation, setModelRotation ] = useState<ViroRotation>([90, 65, 90]);
+  const [modelPosition, setModelPosition] = useState<Viro3DPoint>([0, 0, -1 * DISTANCE]);
+
+
   return (
     <>
-      {/* X轴线 */}
-      <ViroPolyline
-        points={[
-          [-1, 0, 0],
-          [1, 0, 0],
-        ]}
-        thickness={0.01}
-        materials={["red"]}
-      />
-      {/* X轴标签 */}
-      <ViroText text="X" position={[1.1, 0, 0]} scale={[0.1, 0.1, 0.1]} style={{ fontFamily: "Arial", fontSize: 20, color: "red" }} />
-
-      {/* Y轴线 */}
-      <ViroPolyline
-        points={[
-          [0, -1, 0],
-          [0, 1, 0],
-        ]}
-        thickness={0.01}
-        materials={["green"]}
-      />
-      {/* Y轴标签 */}
-      <ViroText text="Y" position={[0, 1.1, 0]} scale={[0.1, 0.1, 0.1]} style={{ fontFamily: "Arial", fontSize: 20, color: "green" }} />
-
-      {/* Z轴线 */}
-      <ViroPolyline
-        points={[
-          [0, 0, -1],
-          [0, 0, 1],
-        ]}
-        thickness={0.01}
-        materials={["blue"]}
-      />
-      {/* Z轴标签 */}
-      <ViroText text="Z" position={[0, 0, 1.1]} scale={[0.1, 0.1, 0.1]} style={{ fontFamily: "Arial", fontSize: 20, color: "blue" }} />
+      <ViroARScene onCameraTransformUpdate={updateCameraPosition}>
+        <ViroAmbientLight color="#ffffff" intensity={200} />
+        <ViroARCamera>
+          <ViroText text={hint} position={[0, 0.1, -1]} scale={[0.4, 0.4, 0.4]} style={{ fontFamily: "Arial", color: "white" }} />
+          {!lock && <Viro3DObject
+            source={require("@assets/models/wall/arrow.obj")}
+            position={[0, 1, -10]}
+            rotation={[90, 0, 90]}
+            scale={[0.03, 0.03, 0.03]}
+            type="OBJ"
+            onClick={placeWall}
+          />}
+          { lock && <>
+            <ControlBar type='position' change={changePosition} />
+            <ControlBar type='rotation' change={changeRotation} />
+            </>
+          }
+        </ViroARCamera>
+        <Viro3DObject
+          source={require("@assets/models/wall/wall1.glb")}
+          rotation={modelRotation}
+          scale={[0.4, 0.4, 0.4]}
+          position={modelPosition}
+          type="GLB"
+        />
+      </ViroARScene>
     </>
   );
 }
 
-function GuideScene() {
-  const placeWall = (...args: any[]) => {
-    console.warn(args);
-    setWallStatus(true);
-  };
+export default function ARTest() {
+  const useStyle = () =>
+    StyleSheet.create({
+      rowLayout: {
+        flexDirection: "row",
+        alignItems: "center",
+        flexShrink: 0,
+      },
+    });
 
-  const [wallPlaceStatus, setWallStatus] = useState<boolean>(false);
-  const [model_position, setModelPostion] = useState<Viro3DPoint>([10, -12, -50]);
+  const { theme } = useAppTheme();
+  const { top } = useSafeAreaInsets();
+  const style = useStyle();
+
+  useEffect(() => {
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE_LEFT);
+
+    return () => {
+      ScreenOrientation.unlockAsync().then(() => {
+        setTimeout(async () => {
+          const curOrientation = await ScreenOrientation.getOrientationAsync();
+          if (curOrientation !== ScreenOrientation.Orientation.PORTRAIT_UP) {
+            ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+          }
+        }, 1000);
+      });
+    };
+  }, []);
+  // @ts-ignore
 
   return (
-    <ViroARScene>
-      <ViroAmbientLight color="#ffffff" intensity={200} />
-      <ViroARCamera>
-        <ViroText
-          text="Place the wall"
-          position={[0, 0, -1]}
-          transformBehaviors={"billboard"}
-          scale={[0.4, 0.4, 0.4]}
-          style={{ fontFamily: "Arial", color: "white" }}
-        />
-        <Viro3DObject
-          source={require("@assets/models/wall/arrow.obj")}
-          position={[0, 0, -10]}
-          rotation={[90, 0, 90]}
-          scale={[0.05, 0.05, 0.05]}
-          type="OBJ"
-        />
-        <Viro3DObject
-          source={require("@assets/models/wall/wall1.glb")}
-          rotation={[90, 65, 90]}
-          position={model_position}
-          scale={[0.2, 0.2, 0.2]}
-          type="GLB"
-          onDrag={(pos) => {
-            console.warn(pos);
-          }}
-        />
-        <ViroButton
-          position={[0, -0.5, -1]}
-          scale={[0.1, 0.1, 0.1]}
-          source={require("@assets/images/play.png")}
-          onClick={placeWall}
-          height={2}
-          width={3}
-        ></ViroButton>
-      </ViroARCamera>
-    </ViroARScene>
+    <MainBody>
+      <>
+        {/* @ts-ignore */}
+        <ViroARSceneNavigator initialScene={{ scene: GuideScene }} />
+        <View
+          style={[
+            style.rowLayout,
+            {
+              justifyContent: "space-between",
+              position: "absolute",
+              top: top + theme.spacing.xs,
+              left: 0,
+              right: 0,
+              paddingHorizontal: theme.spacing.md,
+            },
+          ]}
+        >
+          <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => router.back()} />
+        </View>
+      </>
+    </MainBody>
   );
 }

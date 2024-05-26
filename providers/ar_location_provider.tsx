@@ -2,6 +2,7 @@ import LPF from "@/plugins/low-pass-filter";
 import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
 import * as Location from "expo-location";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { ToastAndroid } from "react-native";
 
 class ARLocationContext {
   initLocation: Location.LocationObjectCoords | undefined;
@@ -126,6 +127,7 @@ export function ARLocationProvider({ children }: Props) {
         } else {
           setLocation(coords);
           lastUpdateTimeStamp.current = now;
+          ToastAndroid.show(`LOW accuracy: ${accuracy}`, ToastAndroid.SHORT);
         }
       });
     };

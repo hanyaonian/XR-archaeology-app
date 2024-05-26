@@ -18,7 +18,8 @@ export enum Routes {
   Events = "/home/events",
 
   // AR - for wall
-  ArWall = '/ar/ar_test',
+  ArTest = '/ar/ar_test',
+  ArWall = '/ar/ar_wall',
   ArPlacement = '/ar/ar_placement',
   ArExplore = '/ar/ar_explore',
 }

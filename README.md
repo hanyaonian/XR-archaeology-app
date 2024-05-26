@@ -16,7 +16,7 @@ For better type annotation, typescript is recommended.
   - [Android]: <https://developer.android.com/codelabs/basic-android-kotlin-compose-connect-device#0>.
   - [iOS]: <https://getupdraft.com/blog/how-enable-ios-developer-mode-iphone-or-ipad>.
 - Create a `.env` file, including:
-  - `appid`, `developer`, `slug` for expo`s app.json 
+  - `appid`, `developer`, `slug` for expo`s app.json
   - `EXPO_PUBLIC_API_URL`, `EXPO_PUBLIC_PREFIX` are for server connection (see remarks)
 
     ```text
