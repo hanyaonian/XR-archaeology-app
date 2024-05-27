@@ -24,6 +24,7 @@
     "@feathersjs/feathers": "^5.0.21",
     "@feathersjs/socketio-client": "^5.0.21",
     "@gorhom/bottom-sheet": "^4.5.1",
+    "@react-native-community/slider": "4.4.2",
     "@react-spring/three": "^9.7.3",
     "@react-three/fiber": "^8.14.2",
     "@tsparticles/engine": "^3.3.0",
