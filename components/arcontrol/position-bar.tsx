@@ -35,7 +35,7 @@ export function ControlBar(props: {
     right: [90, 0, -90],
     left: [90, 0, 0],
   } as Record<Direction, ViroRotation>;
-  const basePosition: Viro3DPoint = type === 'position' ? [-4, -1, -10] : [4, -1, -10];
+  const basePosition: Viro3DPoint = type === 'position' ? [-4, 0, -10] : [4, 0, -10];
   const startTouch = (touchState: any, touchPos: Viro3DPoint) => {
     console.warn(touchState, touchPos);
   }

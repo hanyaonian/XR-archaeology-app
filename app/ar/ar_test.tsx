@@ -122,8 +122,10 @@ function GuideScene() {
       <ViroARScene onCameraTransformUpdate={updateCameraPosition}>
         <ViroAmbientLight color="#ffffff" intensity={200} />
         <ViroARCamera>
-          {stage !== 'screenshot' && <ViroText text={hint} position={[0, 0.1, -1]} scale={[0.4, 0.4, 0.4]} style={{ fontFamily: "Arial", color: "white" }} />}
-          {stage !== "lock" && stage !== 'screenshot' && (
+          {stage !== "screenshot" && (
+            <ViroText text={hint} position={[0, 0.1, -1]} scale={[0.4, 0.4, 0.4]} style={{ fontFamily: "Arial", color: "white" }} />
+          )}
+          {stage !== "lock" && stage !== "screenshot" && (
             <Viro3DObject
               source={require("@assets/models/wall/arrow.obj")}
               position={[0, 1, -10]}
@@ -133,7 +135,7 @@ function GuideScene() {
               onClick={placeWall}
             />
           )}
-          {stage !== "unlock" && stage !== 'screenshot' && (
+          {stage !== "unlock" && stage !== "screenshot" && (
             <>
               <ControlBar type="position" change={changePosition} />
               <ControlBar type="rotation" change={changeRotation} />
@@ -178,14 +180,13 @@ export default function ARTest() {
     })
       .then(
         (uri) => {
-          console.warn(uri)
           MediaLibrary.saveToLibraryAsync(uri)
             .then(() => {
-              ToastAndroid.show('save success!', ToastAndroid.SHORT);
+              ToastAndroid.show("save success!", ToastAndroid.SHORT);
             })
             .catch((err) => {
-              console.error(err);
-              ToastAndroid.show('save failed!', ToastAndroid.SHORT);
+              console.error(uri);
+              ToastAndroid.show("save failed!", ToastAndroid.SHORT);
             });
         },
         (error) => console.error("Oops, snapshot failed", error)
@@ -222,54 +223,58 @@ export default function ARTest() {
         <>
           {/* @ts-ignore */}
           <ViroARSceneNavigator initialScene={{ scene: GuideScene, passProps: { radio } }} />
-          <View
-            style={[
-              style.rowLayout,
-              {
-                justifyContent: "space-between",
-                position: "absolute",
-                top: top + theme.spacing.xs,
-                left: 0,
-                right: 0,
-                paddingHorizontal: theme.spacing.md,
-              },
-            ]}
-          >
-            <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => router.back()} />
-          </View>
-          <View style={style.buttonsArea}>
-            <View style={style.buttons}>
-              <Button title={stage === "lock" ? "Reset" : "Place It!"} onPress={changeState} />
-              <Button title="Screenshot" onPress={screenShot} />
-            </View>
-          </View>
-          <View
-            style={{
-              left: 10,
-              bottom: 30,
-              position: "absolute",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              paddingHorizontal: theme.spacing.md,
-            }}
-          >
-            <Text style={{ color: "white" }}>{`Distance: ${getWallDistance(radio).toFixed(2)} m`}</Text>
-            <Slider
-              style={{
-                width: 300,
-                height: 30,
-              }}
-              value={radio}
-              minimumValue={0}
-              maximumValue={1}
-              minimumTrackTintColor="#FFFFFF"
-              maximumTrackTintColor="#000000"
-              onValueChange={(val) => {
-                setRadio(val);
-              }}
-            />
-          </View>
+          {stage !== "screenshot" && (
+            <>
+              <View
+                style={[
+                  style.rowLayout,
+                  {
+                    justifyContent: "space-between",
+                    position: "absolute",
+                    top: top + theme.spacing.xs,
+                    left: 0,
+                    right: 0,
+                    paddingHorizontal: theme.spacing.md,
+                  },
+                ]}
+              >
+                <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => router.back()} />
+              </View>
+              <View style={style.buttonsArea}>
+                <View style={style.buttons}>
+                  <Button title={stage === "lock" ? "Reset" : "Place It!"} onPress={changeState} />
+                  <Button title="Screenshot" onPress={screenShot} />
+                </View>
+              </View>
+              <View
+                style={{
+                  left: 10,
+                  bottom: 30,
+                  position: "absolute",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  paddingHorizontal: theme.spacing.md,
+                }}
+              >
+                <Text style={{ color: "white" }}>{`Distance: ${getWallDistance(radio).toFixed(2)} m`}</Text>
+                <Slider
+                  style={{
+                    width: 300,
+                    height: 30,
+                  }}
+                  value={radio}
+                  minimumValue={0}
+                  maximumValue={1}
+                  minimumTrackTintColor="#FFFFFF"
+                  maximumTrackTintColor="#000000"
+                  onValueChange={(val) => {
+                    setRadio(val);
+                  }}
+                />
+              </View>
+            </>
+          )}
         </>
       </MainBody>
     </RadioContext.Provider>
