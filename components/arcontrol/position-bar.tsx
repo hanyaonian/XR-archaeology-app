@@ -36,6 +36,9 @@ export function ControlBar(props: {
     left: [90, 0, 0],
   } as Record<Direction, ViroRotation>;
   const basePosition: Viro3DPoint = type === 'position' ? [-4, -1, -10] : [4, -1, -10];
+  const startTouch = (touchState: any, touchPos: Viro3DPoint) => {
+    console.warn(touchState, touchPos);
+  }
   return (
     <>
       {/* down */}
@@ -46,6 +49,7 @@ export function ControlBar(props: {
         scale={scale}
         type="OBJ"
         onClick={() => change({ direction: 'down' })}
+        onHover={startTouch}
       />
       {/* left */}
       <Viro3DObject
@@ -55,6 +59,7 @@ export function ControlBar(props: {
         scale={scale}
         type="OBJ"
         onClick={() => change({ direction: 'left' })}
+        onHover={startTouch}
       />
       {/* right */}
       <Viro3DObject
@@ -64,6 +69,7 @@ export function ControlBar(props: {
         scale={scale}
         type="OBJ"
         onClick={() => change({ direction: 'right' })}
+        onHover={startTouch}
       />
       {/* up */}
       <Viro3DObject
@@ -73,6 +79,7 @@ export function ControlBar(props: {
         scale={scale}
         type="OBJ"
         onClick={() => change({ direction: 'up' })}
+        onHover={startTouch}
       />
     </>
   );
