@@ -177,6 +177,7 @@ export default function ARTest() {
     captureScreen({
       format: "jpg",
       quality: 0.8,
+      handleGLSurfaceViewOnAndroid: true
     })
       .then(
         (uri) => {
