@@ -1,4 +1,4 @@
-import { useEffect, useState, createContext, useContext } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, View, Button, Text, ToastAndroid } from "react-native";
 import {
   ViroARScene,
@@ -14,161 +14,135 @@ import { IconBtn, MainBody } from "@/components";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ChevronLeftIcon } from "@/components/icons";
 import { router } from "expo-router";
-import { ControlBar, Direction } from "@/components/arcontrol/position-bar";
-import { Viro3DPoint, ViroRotation } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
+import { DirectButtons, Direction } from "@/components/arcontrol/native-buttons";
+// import { ControlBar, Direction } from "@/components/arcontrol/position-bar";
 import { captureScreen } from "react-native-view-shot";
 import * as ScreenOrientation from "expo-screen-orientation";
 import * as MediaLibrary from "expo-media-library";
 import Slider from "@react-native-community/slider";
+import { useArModelStore } from "./state/position";
+import { toJS } from "mobx";
+import { observer } from "mobx-react-lite";
 
-type ModelStage = "lock" | "unlock" | "screenshot";
-
-const RadioContext = createContext<{ radio: number; stage: ModelStage; setStage: (stage: ModelStage) => void } | null>(null);
-
-function getWallDistance(radio: number) {
-  const maxDistance = 300;
-  const minDistance = 100;
-  return maxDistance - radio * (maxDistance - minDistance);
-}
-
-function GuideScene() {
-  const placeWall = () => {
-    setHint("Justify it...");
-  };
-
-  const radioContext = useContext(RadioContext);
-  if (!radioContext) {
-    return null;
-  }
-  const { radio, stage } = radioContext;
-
-  const initDistance = getWallDistance(radio);
-  const [distance, setDistance] = useState(initDistance);
+const GuideScene = observer(() => {
   const [lastforward, setForward] = useState([0, 0, 0]);
+  const ModelStore = useArModelStore();
 
   useEffect(() => {
-    if (stage !== "unlock") {
+    if (ModelStore.stage !== "unlock") {
       const [x, y, z] = lastforward;
-      setModelPosition([x * distance + 20, y * distance - 20, z * distance]);
+      ModelStore.setModelPosition([x * ModelStore.distance + 20, y * ModelStore.distance - 20, z * ModelStore.distance]);
     }
-    setDistance(getWallDistance(radio));
-  }, [radio]);
+  }, [ModelStore.radio]);
 
   const updateCameraPosition = (cameraTransform: ViroCameraTransform) => {
-    if (stage !== "unlock") {
+    if (ModelStore.stage !== "unlock") {
       return;
     }
     const { forward, rotation } = cameraTransform;
     const [x, y, z] = forward;
     const [rx, ry, rz] = rotation;
     setForward(forward);
-    setModelPosition([x * distance + 20, y * distance - 20, z * distance]);
+    ModelStore.setModelPosition([x * ModelStore.distance + 20, y * ModelStore.distance - 20, z * ModelStore.distance]);
   };
-
-  const changePosition = (params: { direction: Direction }) => {
-    const [x, y, z] = modelPosition;
-    const { direction } = params;
-    const distance_unit = radio * 10;
-    switch (direction) {
-      case "down": {
-        setModelPosition([x, y - distance_unit, z]);
-        break;
-      }
-      case "up": {
-        setModelPosition([x, y + distance_unit, z]);
-        break;
-      }
-      case "right": {
-        setModelPosition([x + distance_unit, y, z]);
-        break;
-      }
-      case "left": {
-        setModelPosition([x - distance_unit, y, z]);
-        break;
-      }
-    }
-  };
-
-  const changeRotation = (params: { direction: Direction }) => {
-    const [x, y, z] = modelRotation;
-    const { direction } = params;
-    const distance_unit = radio * 5;
-    switch (direction) {
-      case "down": {
-        setModelRotation([x, y - distance_unit, z]);
-        break;
-      }
-      case "up": {
-        setModelRotation([x, y + distance_unit, z]);
-        break;
-      }
-      case "right": {
-        setModelRotation([x + distance_unit, y, z]);
-        break;
-      }
-      case "left": {
-        setModelRotation([x - distance_unit, y, z]);
-        break;
-      }
-    }
-  };
-
-  const [hint, setHint] = useState<string>("Press to place the wall");
-  const [modelRotation, setModelRotation] = useState<ViroRotation>([90, 65, 90]);
-  const [modelPosition, setModelPosition] = useState<Viro3DPoint>([0, 0, -1 * distance]);
 
   return (
     <>
       <ViroARScene onCameraTransformUpdate={updateCameraPosition}>
         <ViroAmbientLight color="#ffffff" intensity={200} />
         <ViroARCamera>
-          {stage !== "screenshot" && (
-            <ViroText text={hint} position={[0, 0.1, -1]} scale={[0.4, 0.4, 0.4]} style={{ fontFamily: "Arial", color: "white" }} />
+          {ModelStore.stage === "unlock" && (
+            <ViroText
+              text="Press to place the wall"
+              position={[0, 0.1, -1]}
+              scale={[0.4, 0.4, 0.4]}
+              style={{ fontFamily: "Arial", color: "white" }}
+            />
           )}
-          {stage !== "lock" && stage !== "screenshot" && (
+          {ModelStore.stage === "unlock" && (
             <Viro3DObject
               source={require("@assets/models/wall/arrow.obj")}
               position={[0, 1, -10]}
               rotation={[90, 0, 90]}
               scale={[0.03, 0.03, 0.03]}
               type="OBJ"
-              onClick={placeWall}
             />
-          )}
-          {stage !== "unlock" && stage !== "screenshot" && (
-            <>
-              <ControlBar type="position" change={changePosition} />
-              <ControlBar type="rotation" change={changeRotation} />
-            </>
           )}
         </ViroARCamera>
         <Viro3DObject
           source={require("@assets/models/wall/wall2.glb")}
-          rotation={modelRotation}
+          rotation={toJS(ModelStore.rotation)}
+          position={toJS(ModelStore.position)}
           scale={[1, 1, 1]}
-          position={modelPosition}
           type="GLB"
         />
       </ViroARScene>
     </>
   );
-}
+});
 
-export default function ARTest() {
-  const [radio, setRadio] = useState(0.5);
+const ARTest = observer(() => {
   const { theme } = useAppTheme();
   const { top } = useSafeAreaInsets();
   const style = useStyle();
+  const ModelStore = useArModelStore();
   const [status, requestPermission] = MediaLibrary.usePermissions();
-  const [stage, setStage] = useState<ModelStage>("unlock");
 
   if (status === null) {
     requestPermission();
   }
 
+  const changeRotation = (params: { direction: Direction }) => {
+    const [x, y, z] = ModelStore.rotation;
+    const { direction } = params;
+    const distance_unit = ModelStore.radio * 5;
+    switch (direction) {
+      case "down": {
+        ModelStore.setModelRotation([x, y - distance_unit, z]);
+        break;
+      }
+      case "up": {
+        ModelStore.setModelRotation([x, y + distance_unit, z]);
+        break;
+      }
+      case "right": {
+        ModelStore.setModelRotation([x + distance_unit, y, z]);
+        break;
+      }
+      case "left": {
+        ModelStore.setModelRotation([x - distance_unit, y, z]);
+        break;
+      }
+    }
+  };
+
+  const changePosition = (params: { direction: Direction }) => {
+    const [x, y, z] = ModelStore.position;
+    const { direction } = params;
+    const distance_unit = ModelStore.radio * 10;
+    switch (direction) {
+      case "down": {
+        ModelStore.setModelPosition([x, y - distance_unit, z]);
+        break;
+      }
+      case "up": {
+        ModelStore.setModelPosition([x, y + distance_unit, z]);
+        break;
+      }
+      case "right": {
+        ModelStore.setModelPosition([x + distance_unit, y, z]);
+        break;
+      }
+      case "left": {
+        ModelStore.setModelPosition([x - distance_unit, y, z]);
+        break;
+      }
+    }
+  };
+
   const screenShot = async () => {
-    const previousState = stage;
-    setStage("screenshot");
+    const previousState = ModelStore.stage;
+    ModelStore.setStage("screenshot");
     await new Promise((resolve) => {
       setTimeout(() => {
         resolve(null);
@@ -177,7 +151,7 @@ export default function ARTest() {
     captureScreen({
       format: "jpg",
       quality: 0.8,
-      handleGLSurfaceViewOnAndroid: true
+      handleGLSurfaceViewOnAndroid: true,
     })
       .then(
         (uri) => {
@@ -193,19 +167,20 @@ export default function ARTest() {
         (error) => console.error("Oops, snapshot failed", error)
       )
       .finally(() => {
-        setStage(previousState);
+        ModelStore.setStage(previousState);
       });
   };
 
   const changeState = () => {
-    if (stage === "lock") {
-      setStage("unlock");
+    if (ModelStore.stage === "lock") {
+      ModelStore.setStage("unlock");
     } else {
-      setStage("lock");
+      ModelStore.setStage("lock");
     }
   };
 
   useEffect(() => {
+    ModelStore.reset();
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE_RIGHT);
     return () => {
       setTimeout(async () => {
@@ -219,68 +194,76 @@ export default function ARTest() {
   // @ts-ignore
 
   return (
-    <RadioContext.Provider value={{ radio, stage, setStage }}>
-      <MainBody>
-        <>
-          {/* @ts-ignore */}
-          <ViroARSceneNavigator initialScene={{ scene: GuideScene, passProps: { radio } }} />
-          {stage !== "screenshot" && (
-            <>
-              <View
-                style={[
-                  style.rowLayout,
-                  {
-                    justifyContent: "space-between",
-                    position: "absolute",
-                    top: top + theme.spacing.xs,
-                    left: 0,
-                    right: 0,
-                    paddingHorizontal: theme.spacing.md,
-                  },
-                ]}
-              >
-                <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => router.back()} />
-              </View>
-              <View style={style.buttonsArea}>
-                <View style={style.buttons}>
-                  <Button title={stage === "lock" ? "Reset" : "Place It!"} onPress={changeState} />
-                  <Button title="Screenshot" onPress={screenShot} />
-                </View>
-              </View>
-              <View
-                style={{
-                  left: 10,
-                  bottom: 30,
+    <MainBody>
+      <>
+        {/* @ts-ignore */}
+        <ViroARSceneNavigator initialScene={{ scene: GuideScene }} />
+        {ModelStore.stage !== "screenshot" && (
+          <>
+            <View
+              style={[
+                style.rowLayout,
+                {
+                  justifyContent: "space-between",
                   position: "absolute",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  top: top + theme.spacing.xs,
+                  left: 0,
+                  right: 0,
                   paddingHorizontal: theme.spacing.md,
-                }}
-              >
-                <Text style={{ color: "white" }}>{`Distance: ${getWallDistance(radio).toFixed(2)} m`}</Text>
-                <Slider
-                  style={{
-                    width: 300,
-                    height: 30,
-                  }}
-                  value={radio}
-                  minimumValue={0}
-                  maximumValue={1}
-                  minimumTrackTintColor="#FFFFFF"
-                  maximumTrackTintColor="#000000"
-                  onValueChange={(val) => {
-                    setRadio(val);
-                  }}
-                />
+                },
+              ]}
+            >
+              <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => router.back()} />
+            </View>
+            <View style={style.buttonsArea}>
+              <View style={style.buttons}>
+                <Button title={ModelStore.stage === "lock" ? "Reset" : "Place It!"} onPress={changeState} />
+                <Button title="Screenshot" onPress={screenShot} />
               </View>
-            </>
-          )}
-        </>
-      </MainBody>
-    </RadioContext.Provider>
+            </View>
+            <View style={style.controls}>
+              {ModelStore.stage === "lock" && (
+                <>
+                  <DirectButtons type="position" change={changePosition} />
+                  <DirectButtons type="rotation" change={changeRotation} />
+                </>
+              )}
+            </View>
+            <View
+              style={{
+                left: 10,
+                bottom: 30,
+                position: "absolute",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                paddingHorizontal: theme.spacing.md,
+              }}
+            >
+              <Text style={{ color: "white" }}>{`Distance: ${ModelStore.distance.toFixed(2)} m`}</Text>
+              <Slider
+                style={{
+                  width: 300,
+                  height: 30,
+                }}
+                value={ModelStore.radio}
+                minimumValue={0}
+                maximumValue={1}
+                minimumTrackTintColor="#FFFFFF"
+                maximumTrackTintColor="#000000"
+                onValueChange={(val) => {
+                  ModelStore.setRadio(val);
+                }}
+              />
+            </View>
+          </>
+        )}
+      </>
+    </MainBody>
   );
-}
+});
+
+export default ARTest;
 
 const useStyle = () =>
   StyleSheet.create({
@@ -295,6 +278,15 @@ const useStyle = () =>
       right: 0,
       width: "50%",
       alignSelf: "center",
+    },
+    controls: {
+      position: "absolute",
+      bottom: "50%",
+      left: "-25%",
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-evenly",
     },
     buttons: {
       padding: 10,

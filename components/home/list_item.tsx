@@ -56,45 +56,18 @@ export default function ListItem({ name, briefDesc, images, href, showNavigate, 
 
   const actions = getActions();
 
-  function render1() {
-    const image: string | undefined = images?.[0];
-    return (
-      <TouchableRipple onPress={onPress}>
-        <View style={style.card}>
-          <View style={{ flexDirection: "row", alignContent: "center", justifyContent: "center" }}>
-            {image && (
-              <View style={style.circle}>
-                <Image source={{ uri: getThumb(image) }} style={style.image} />
-              </View>
-            )}
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "column",
-                justifyContent: "center",
-                rowGap: theme.spacing.xs,
-                marginLeft: theme.spacing.lg,
-                marginRight: theme.spacing.xs,
-              }}
-            >
-              <Text variant="labelLarge" style={{ color: theme.colors.text }}>
-                {name}
-              </Text>
-              {briefDesc && (
-                <Text variant="bodyMedium" style={{ color: theme.colors.text }}>
-                  {briefDesc}
-                </Text>
-              )}
-            </View>
-            <View style={{ flexDirection: "row", alignContent: "center", justifyContent: "center", height: "100%" }}>{actions}</View>
-          </View>
-        </View>
-      </TouchableRipple>
-    );
+  function ListImage(props: {
+    image: unknown
+  }) {
+    const { image } = props;
+    if (typeof image === 'number') {
+      return  <Image source={image} style={style.image} />
+    }
+    return <Image source={{ uri: getThumb(image) }} style={style.image} />
   }
 
   function render2() {
-    const image: string | undefined = images?.[0];
+    const image: string | number | undefined = images?.[0];
     let tags = "";
     if (Array.isArray(props.tags)) {
       if (props.tags.length > 0) {
@@ -108,7 +81,7 @@ export default function ListItem({ name, briefDesc, images, href, showNavigate, 
           <View style={{ flexDirection: "row", alignContent: "center", justifyContent: "center", position: "relative" }}>
             {image && (
               <View style={{ width: 132, position: "absolute", top: 0, bottom: 0, left: 0 }}>
-                <Image source={{ uri: getThumb(image) }} style={style.image} />
+                <ListImage image={image}></ListImage>
               </View>
             )}
             <View

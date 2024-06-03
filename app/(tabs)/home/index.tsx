@@ -62,7 +62,7 @@ export default function Home() {
             icon="createAR"
             iconProps={{ fill: theme.colors.text }}
             onPress={() => {
-              router.push(Routes.ArTest);
+              router.push(Routes.ArEntry);
             }} />
         </View>
 
