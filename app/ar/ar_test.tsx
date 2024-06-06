@@ -13,10 +13,9 @@ import { useAppTheme } from "@providers/style_provider";
 import { IconBtn, MainBody } from "@/components";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ChevronLeftIcon } from "@/components/icons";
-import { router } from "expo-router";
-import { DirectButtons, Direction } from "@/components/arcontrol/native-buttons";
-// import { ControlBar, Direction } from "@/components/arcontrol/position-bar";
+import { router, useLocalSearchParams } from "expo-router";
 import { captureScreen } from "react-native-view-shot";
+import { DirectButtons, Direction } from "@/components/arcontrol/native-buttons";
 import * as ScreenOrientation from "expo-screen-orientation";
 import * as MediaLibrary from "expo-media-library";
 import Slider from "@react-native-community/slider";
@@ -27,6 +26,12 @@ import { observer } from "mobx-react-lite";
 const GuideScene = observer(() => {
   const [lastforward, setForward] = useState([0, 0, 0]);
   const ModelStore = useArModelStore();
+  const params = useLocalSearchParams<{ id?: '1' | '2' }>();
+  const wall_obj_map = {
+    1: require("@assets/models/wall/wall1.glb"),
+    2: require("@assets/models/wall/wall2.glb"),
+  };
+  const wall_model = wall_obj_map[params.id ?? '1'];
 
   useEffect(() => {
     if (ModelStore.stage !== "unlock") {
@@ -39,9 +44,8 @@ const GuideScene = observer(() => {
     if (ModelStore.stage !== "unlock") {
       return;
     }
-    const { forward, rotation } = cameraTransform;
+    const { forward } = cameraTransform;
     const [x, y, z] = forward;
-    const [rx, ry, rz] = rotation;
     setForward(forward);
     ModelStore.setModelPosition([x * ModelStore.distance + 20, y * ModelStore.distance - 20, z * ModelStore.distance]);
   };
@@ -70,11 +74,12 @@ const GuideScene = observer(() => {
           )}
         </ViroARCamera>
         <Viro3DObject
-          source={require("@assets/models/wall/wall2.glb")}
+          source={wall_model}
           rotation={toJS(ModelStore.rotation)}
           position={toJS(ModelStore.position)}
           scale={[1, 1, 1]}
           type="GLB"
+          onError={() => ToastAndroid.show("Model load failed, please retry!", ToastAndroid.SHORT)}
         />
       </ViroARScene>
     </>

@@ -94,7 +94,7 @@ export default function Home() {
           <View style={{ columnGap: theme.spacing.md, rowGap: theme.spacing.sm, flexDirection: "row", flexWrap: "wrap" }}>
             <Link href={{ pathname: Routes.Attractions, params: { type: "Attraction" } }} asChild>
               <Pressable style={style.subThumbContainer}>
-                <ImageBackground source={require("@assets/images/attraction.jpg")} imageStyle={style.image}>
+                <ImageBackground source={require("@assets/images/attraction.jpeg")} imageStyle={style.image}>
                   <View style={style.subThumb}>
                     <Text variant="labelLarge" style={[style.label, { top: theme.spacing.xxs, left: theme.spacing.xs, position: "absolute" }]}>
                       Attractions
@@ -105,7 +105,7 @@ export default function Home() {
             </Link>
             <Link href={Routes.Living} asChild>
               <Pressable style={style.subThumbContainer}>
-                <ImageBackground source={require("@assets/images/food.png")} imageStyle={style.image}>
+                <ImageBackground source={require("@assets/images/food.jpeg")} imageStyle={style.image}>
                   <View style={style.subThumb}>
                     <Text variant="labelLarge" style={[style.label, { top: theme.spacing.xxs, right: theme.spacing.xs, position: "absolute" }]}>
                       Food & Lodging
@@ -116,7 +116,7 @@ export default function Home() {
             </Link>
             <Link href={Routes.Hiking} asChild>
               <Pressable style={style.subThumbContainer}>
-                <ImageBackground source={require("@assets/images/hiking.jpg")} imageStyle={style.image}>
+                <ImageBackground source={require("@assets/images/hiking.jpeg")} imageStyle={style.image}>
                   <View style={style.subThumb}>
                     <Text variant="labelLarge" style={[style.label, { bottom: theme.spacing.xxs, left: theme.spacing.xs, position: "absolute" }]}>
                       Hiking
@@ -183,7 +183,7 @@ export default function Home() {
         </View>
 
         {/* Map */}
-        <View
+        {/* <View
           style={[
             { flexGrow: 0, flexShrink: 1 },
             ...[isPortrait(orientation) ? {} : { minHeight: Math.round(MAP_IMG_HEIGHT * (screenWidth / MAP_IMG_WIDTH)) }],
@@ -197,7 +197,7 @@ export default function Home() {
               Map of Valley
             </Text>
           </View>
-        </View>
+        </View> */}
       </Layout>
     </MainBody>
   );
