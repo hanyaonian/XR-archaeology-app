@@ -8,6 +8,8 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { AuthProvider } from "@providers/auth_provider";
 import { FeathersProvider } from "@providers/feathers_provider";
 import { StyleProvider, useAppTheme } from "@providers/style_provider";
+import { useAppStore } from '@/app/state/app';
+import { observer } from "mobx-react-lite";
 
 export default function RootLayout() {
   const [loadedFont, error] = useFonts(customFonts);
@@ -33,8 +35,9 @@ export default function RootLayout() {
  * Separates the layouts from above so that we can use `useAppTheme` context.
  * @returns Stack Layout and a Status Bar
  */
-function StackLayout() {
+const StackLayout = observer(() => {
   const { style } = useAppTheme();
+  const store = useAppStore();
   return (
     <>
       <Stack screenOptions={{ headerShown: false }}>
@@ -48,7 +51,7 @@ function StackLayout() {
         <Stack.Screen name="ar/ar_explore" />
         <Stack.Screen name="collection" />
       </Stack>
-      <StatusBar style={style === "dark" ? "light" : "dark"} />
+      <StatusBar hidden={store.bar_status === 'hidden'} style={style === "dark" ? "light" : "dark"} />
     </>
   );
-}
+});

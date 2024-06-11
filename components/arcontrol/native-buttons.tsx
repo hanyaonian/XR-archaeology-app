@@ -1,10 +1,10 @@
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 
-export type Direction = "left" | "right" | "up" | "down";
+export type Direction = "left" | "right" | "up" | "down" | "rotate-z-plus" | "rotate-z-minus" ;
 
 // 自定义的上下左右按钮组件
 export function DirectButtons(props: { type: "rotation" | "position"; change: (params: { direction: Direction }) => void }) {
-  const { change } = props;
+  const { change, type } = props;
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => change({ direction: "down" })} style={[styles.button, { top: 0, right: 0 }]}>
@@ -19,6 +19,16 @@ export function DirectButtons(props: { type: "rotation" | "position"; change: (p
       <TouchableOpacity onPress={() => change({ direction: "right" })} style={[styles.button, { right: -50, top: "25%" }]}>
         <Text style={styles.buttonText}>→</Text>
       </TouchableOpacity>
+      {type === "rotation" && (
+        <>
+          <TouchableOpacity onPress={() => change({ direction: "rotate-z-minus" })} style={[styles.button, { right: 50, top: 50 }]}>
+            <Text style={styles.buttonText}>z←</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => change({ direction: "rotate-z-plus" })} style={[styles.button, { right: -60, top: 50 }]}>
+            <Text style={styles.buttonText}>z→</Text>
+          </TouchableOpacity>
+        </>
+      )}
     </View>
   );
 }
@@ -31,7 +41,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   button: {
-    position: 'absolute',
+    position: "absolute",
     padding: 10,
     backgroundColor: "lightblue",
     borderRadius: 5,
@@ -39,6 +49,6 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 20,
     color: "white",
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });

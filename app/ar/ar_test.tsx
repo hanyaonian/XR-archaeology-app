@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { StyleSheet, View, Button, Text, ToastAndroid } from "react-native";
 import {
   ViroARScene,
@@ -19,19 +19,20 @@ import { DirectButtons, Direction } from "@/components/arcontrol/native-buttons"
 import * as ScreenOrientation from "expo-screen-orientation";
 import * as MediaLibrary from "expo-media-library";
 import Slider from "@react-native-community/slider";
-import { useArModelStore } from "./state/position";
+import { useArModelStore } from "@/app/state/position";
+import { useAppStore } from "@/app/state/app";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 
 const GuideScene = observer(() => {
   const [lastforward, setForward] = useState([0, 0, 0]);
   const ModelStore = useArModelStore();
-  const params = useLocalSearchParams<{ id?: '1' | '2' }>();
+  const params = useLocalSearchParams<{ id?: "1" | "2" }>();
   const wall_obj_map = {
     1: require("@assets/models/wall/wall1.glb"),
     2: require("@assets/models/wall/wall2.glb"),
   };
-  const wall_model = wall_obj_map[params.id ?? '1'];
+  const wall_model = wall_obj_map[params.id ?? "1"];
 
   useEffect(() => {
     if (ModelStore.stage !== "unlock") {
@@ -52,7 +53,7 @@ const GuideScene = observer(() => {
 
   return (
     <>
-      <ViroARScene onCameraTransformUpdate={updateCameraPosition}>
+      <ViroARScene onCameraTransformUpdate={(info) => updateCameraPosition(info)}>
         <ViroAmbientLight color="#ffffff" intensity={200} />
         <ViroARCamera>
           {ModelStore.stage === "unlock" && (
@@ -61,15 +62,6 @@ const GuideScene = observer(() => {
               position={[0, 0.1, -1]}
               scale={[0.4, 0.4, 0.4]}
               style={{ fontFamily: "Arial", color: "white" }}
-            />
-          )}
-          {ModelStore.stage === "unlock" && (
-            <Viro3DObject
-              source={require("@assets/models/wall/arrow.obj")}
-              position={[0, 1, -10]}
-              rotation={[90, 0, 90]}
-              scale={[0.03, 0.03, 0.03]}
-              type="OBJ"
             />
           )}
         </ViroARCamera>
@@ -90,6 +82,7 @@ const ARTest = observer(() => {
   const { theme } = useAppTheme();
   const { top } = useSafeAreaInsets();
   const style = useStyle();
+  const appStore = useAppStore();
   const ModelStore = useArModelStore();
   const [status, requestPermission] = MediaLibrary.usePermissions();
 
@@ -116,6 +109,14 @@ const ARTest = observer(() => {
       }
       case "left": {
         ModelStore.setModelRotation([x - distance_unit, y, z]);
+        break;
+      }
+      case 'rotate-z-minus': {
+        ModelStore.setModelRotation([x, y, z - distance_unit]);
+        break;
+      }
+      case 'rotate-z-plus': {
+        ModelStore.setModelRotation([x, y, z + distance_unit]);
         break;
       }
     }
@@ -185,6 +186,7 @@ const ARTest = observer(() => {
   };
 
   useEffect(() => {
+    appStore.setAppBar('hidden');
     ModelStore.reset();
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE_RIGHT);
     return () => {
@@ -193,6 +195,7 @@ const ARTest = observer(() => {
         if (curOrientation !== ScreenOrientation.Orientation.PORTRAIT_UP) {
           ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
         }
+        appStore.setAppBar('show');
       }, 1000);
     };
   }, []);
@@ -222,18 +225,33 @@ const ARTest = observer(() => {
             </View>
             <View style={style.buttonsArea}>
               <View style={style.buttons}>
-                <Button title={ModelStore.stage === "lock" ? "Reset" : "Place It!"} onPress={changeState} />
-                <Button title="Screenshot" onPress={screenShot} />
+                <Button title={ModelStore.stage === "lock" ? "Reset" : "Place It!"} onPress={() => changeState()} />
+                <Button title="Screenshot" onPress={() => screenShot()} />
               </View>
             </View>
             <View style={style.controls}>
               {ModelStore.stage === "lock" && (
                 <>
-                  <DirectButtons type="position" change={changePosition} />
-                  <DirectButtons type="rotation" change={changeRotation} />
+                  <DirectButtons type="position" change={(params) => changePosition(params)} />
+                  <DirectButtons type="rotation" change={(params) => changeRotation(params)} />
                 </>
               )}
             </View>
+            {/* Rotation Slider */}
+            <View
+              style={{
+                right: 10,
+                bottom: "50%",
+                position: "absolute",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                paddingHorizontal: theme.spacing.md,
+              }}
+            >
+
+            </View>
+            {/* Distance slider */}
             <View
               style={{
                 left: 10,
