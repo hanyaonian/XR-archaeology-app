@@ -103,17 +103,6 @@ export default function Home() {
                 </ImageBackground>
               </Pressable>
             </Link>
-            <Link href={Routes.Living} asChild>
-              <Pressable style={style.subThumbContainer}>
-                <ImageBackground source={require("@assets/images/food.jpeg")} imageStyle={style.image}>
-                  <View style={style.subThumb}>
-                    <Text variant="labelLarge" style={[style.label, { top: theme.spacing.xxs, right: theme.spacing.xs, position: "absolute" }]}>
-                      Food & Lodging
-                    </Text>
-                  </View>
-                </ImageBackground>
-              </Pressable>
-            </Link>
             <Link href={Routes.Hiking} asChild>
               <Pressable style={style.subThumbContainer}>
                 <ImageBackground source={require("@assets/images/hiking.jpeg")} imageStyle={style.image}>
@@ -125,9 +114,20 @@ export default function Home() {
                 </ImageBackground>
               </Pressable>
             </Link>
+            <Link href={Routes.Living} asChild>
+              <Pressable style={style.subThumbContainer}>
+                <ImageBackground source={require("@assets/images/food.jpg")} imageStyle={style.image}>
+                  <View style={style.subThumb}>
+                    <Text variant="labelLarge" style={[style.label, { top: theme.spacing.xxs, right: theme.spacing.xs, position: "absolute" }]}>
+                      Food & Lodging
+                    </Text>
+                  </View>
+                </ImageBackground>
+              </Pressable>
+            </Link>
             <Link href={Routes.Events} asChild>
               <Pressable style={style.subThumbContainer}>
-                <ImageBackground source={require("@assets/images/events.png")} imageStyle={style.image}>
+                <ImageBackground source={require("@assets/images/events.jpg")} imageStyle={style.image}>
                   <View style={style.subThumb}>
                     <Text variant="labelLarge" style={[style.label, { bottom: theme.spacing.xxs, right: theme.spacing.xs, position: "absolute" }]}>
                       Events

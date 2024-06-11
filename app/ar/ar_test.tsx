@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, View, Button, Text, ToastAndroid } from "react-native";
 import {
   ViroARScene,
@@ -16,6 +16,7 @@ import { ChevronLeftIcon } from "@/components/icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { captureScreen } from "react-native-view-shot";
 import { DirectButtons, Direction } from "@/components/arcontrol/native-buttons";
+import { RotationButtons, RotationDirection } from "@/components/arcontrol/rotation-buttons";
 import * as ScreenOrientation from "expo-screen-orientation";
 import * as MediaLibrary from "expo-media-library";
 import Slider from "@react-native-community/slider";
@@ -90,7 +91,7 @@ const ARTest = observer(() => {
     requestPermission();
   }
 
-  const changeRotation = (params: { direction: Direction }) => {
+  const changeRotation = (params: { direction: RotationDirection }) => {
     const [x, y, z] = ModelStore.rotation;
     const { direction } = params;
     const distance_unit = ModelStore.radio * 5;
@@ -233,7 +234,7 @@ const ARTest = observer(() => {
               {ModelStore.stage === "lock" && (
                 <>
                   <DirectButtons type="position" change={(params) => changePosition(params)} />
-                  <DirectButtons type="rotation" change={(params) => changeRotation(params)} />
+                  <RotationButtons type="rotation" change={(params) => changeRotation(params)} />
                 </>
               )}
             </View>

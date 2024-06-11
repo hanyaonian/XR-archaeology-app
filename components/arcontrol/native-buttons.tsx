@@ -1,6 +1,6 @@
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 
-export type Direction = "left" | "right" | "up" | "down" | "rotate-z-plus" | "rotate-z-minus" ;
+export type Direction = "left" | "right" | "up" | "down";
 
 // 自定义的上下左右按钮组件
 export function DirectButtons(props: { type: "rotation" | "position"; change: (params: { direction: Direction }) => void }) {
@@ -19,16 +19,6 @@ export function DirectButtons(props: { type: "rotation" | "position"; change: (p
       <TouchableOpacity onPress={() => change({ direction: "right" })} style={[styles.button, { right: -50, top: "25%" }]}>
         <Text style={styles.buttonText}>→</Text>
       </TouchableOpacity>
-      {type === "rotation" && (
-        <>
-          <TouchableOpacity onPress={() => change({ direction: "rotate-z-minus" })} style={[styles.button, { right: 50, top: 50 }]}>
-            <Text style={styles.buttonText}>z←</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => change({ direction: "rotate-z-plus" })} style={[styles.button, { right: -60, top: 50 }]}>
-            <Text style={styles.buttonText}>z→</Text>
-          </TouchableOpacity>
-        </>
-      )}
     </View>
   );
 }
