@@ -6,12 +6,9 @@ import { AppTheme, useAppTheme } from "@providers/style_provider";
 import { useAuth } from "@providers/auth_provider";
 import { Link, router } from "expo-router";
 import { Orientation, isPortrait, useOrientation } from "@/plugins/orientation";
-import { vedi_point } from "@/app/composable/ar";
 import { Routes } from "@/app/composable/routes";
 
 const DECORATE_BOX_HEIGHT = 124;
-const MAP_IMG_HEIGHT = 303;
-const MAP_IMG_WIDTH = 626;
 
 function Layout({ children, orientation }: { children?: JSX.Element | (JSX.Element | undefined | boolean)[]; orientation: Orientation }) {
   if (isPortrait(orientation)) {
@@ -79,7 +76,7 @@ export default function Home() {
             paddingBottom: theme.spacing.lg,
           }}
         >
-          <Link href="/home/history" asChild>
+          <Link href={Routes.History} asChild>
             <Pressable style={{ elevation: 12 }}>
               <ImageBackground source={require("@assets/images/vedi.jpg")} style={[style.thumbnail]} imageStyle={style.image}>
                 <View style={{ bottom: theme.spacing.sm, left: theme.spacing.sm, position: "absolute" }}>
@@ -107,7 +104,7 @@ export default function Home() {
               <Pressable style={style.subThumbContainer}>
                 <ImageBackground source={require("@assets/images/hiking.jpeg")} imageStyle={style.image}>
                   <View style={style.subThumb}>
-                    <Text variant="labelLarge" style={[style.label, { bottom: theme.spacing.xxs, left: theme.spacing.xs, position: "absolute" }]}>
+                    <Text variant="labelLarge" style={[style.label, { top: theme.spacing.xxs, right: theme.spacing.xs, position: "absolute" }]}>
                       Hiking
                     </Text>
                   </View>
@@ -118,7 +115,7 @@ export default function Home() {
               <Pressable style={style.subThumbContainer}>
                 <ImageBackground source={require("@assets/images/food.jpg")} imageStyle={style.image}>
                   <View style={style.subThumb}>
-                    <Text variant="labelLarge" style={[style.label, { top: theme.spacing.xxs, right: theme.spacing.xs, position: "absolute" }]}>
+                    <Text variant="labelLarge" style={[style.label, { left: theme.spacing.xxs, bottom: theme.spacing.xs, position: "absolute" }]}>
                       Food & Lodging
                     </Text>
                   </View>

@@ -11,6 +11,7 @@ export enum Routes {
   Account = '/account',
   Profile = '/account/profile',
   Settings = '/account/settings',
+  History = '/home/history',
 
   // list views
   Living = "/home/livings",

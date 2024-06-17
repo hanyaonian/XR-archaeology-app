@@ -2,6 +2,7 @@ import { Content } from "@/models";
 import { useAppTheme } from "@/providers/style_provider";
 import { ImageStyle, View, ViewStyle } from "react-native";
 import { Text } from "react-native-paper";
+import { Tts } from "@/components/common/tts";
 import Carousel from "./carousel";
 
 export interface Props {
@@ -21,9 +22,11 @@ export default function ContentItem({ content, ...props }: Props) {
         {content.heading.toString()}
       </Text>
       {content.images && <Carousel images={content.images} imageStyle={props.imageStyle} />}
-      <Text variant="bodyMedium" style={{ color: theme.colors.text, marginTop: theme.spacing.md, paddingHorizontal: theme.spacing.lg }}>
-        {content.desc?.toString() ?? ""}
-      </Text>
+      <Tts
+        variant="bodyMedium"
+        text={content.desc?.toString() ?? ""}
+        style={{ color: theme.colors.text, marginTop: theme.spacing.md, paddingHorizontal: theme.spacing.lg }}
+      ></Tts>
     </View>
   );
 }

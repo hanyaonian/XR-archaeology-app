@@ -1,9 +1,10 @@
 import { AppBar, MainBody, ListItem, ListItemProps, NAVBAR_HEIGHT } from "@/components";
+import { SearchInput } from "@/components/common/search";
 import { Attraction, AttractionType } from "@/models";
 import { useFeathers, Paginated } from "@/providers/feathers_provider";
 import { useAppTheme } from "@/providers/style_provider";
 import { useLocalSearchParams } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FlatList, View } from "react-native";
 import { ActivityIndicator, Text } from "react-native-paper";
 
@@ -39,8 +40,9 @@ export default function Page() {
   /** scroll to load more */
   const [loading, setLoading] = useState(false);
   const [hasScrolled, setScrolled] = useState(false);
+  const [search, setSearchText] = useState("");
   const cursor = useRef(0);
-  const total = useRef(0);
+  const total = useRef(Infinity);
 
   useEffect(() => {
     async function init() {
@@ -54,19 +56,42 @@ export default function Page() {
     init();
   }, []);
 
+  const searched_list =  useMemo(() => {
+    const search_text = search.trim();
+    if (!search_text) {
+      return attractions;
+    }
+    return attractions.filter(attraction => {
+      return attraction.name.toLowerCase().includes(search_text.toLowerCase())
+    })
+  }, [search])
+
   async function syncData() {
     if (cursor.current != 0 && cursor.current >= total.current) return;
-    const query = { $skip: cursor.current, $sort: { order: 1 }, type: type, $populate: ["tags"] };
-    const res: Paginated<Attraction> = await feathers.service("attractions").find({
-      query: query,
-    });
-
-    if (res.total != total.current) total.current = res.total;
-    let count: number = res.data.length;
-
-    setAttractions((items) => [...items, ...res.data]);
-    cursor.current += count;
+    while (cursor.current < total.current) {
+      const query = { $skip: cursor.current, $sort: { order: 1 }, type: type, $populate: ["tags"] };
+      const res: Paginated<Attraction> = await feathers.service("attractions").find({
+        query: query,
+      });
+  
+      if (res.total != total.current) total.current = res.total;
+      let count: number = res.data.length;
+  
+      setAttractions((items) => [...items, ...res.data]);
+      cursor.current += count;
+    }
   }
+
+  const header = (() => {
+    return (
+      <View style={{ paddingHorizontal: theme.spacing.lg, paddingBottom: theme.spacing.lg, paddingTop: theme.spacing.md }}>
+        <Text variant="bodyMedium" style={{ color: theme.colors.grey2 }}>
+          {mappingDesc[type].desc}
+        </Text>
+        <SearchInput onChangeText={(val) => setSearchText(val)}></SearchInput>
+      </View>
+    );
+  })();
 
   async function onScroll({ nativeEvent }) {
     setScrolled(true);
@@ -90,7 +115,7 @@ export default function Page() {
         onScroll={onScroll}
         onEndReached={loadMore}
         scrollEventThrottle={400}
-        data={attractions}
+        data={searched_list}
         keyExtractor={(item) => item._id}
         ItemSeparatorComponent={() => <View style={{ height: theme.spacing.xs }} />}
         contentContainerStyle={{ flexGrow: 1, paddingBottom: NAVBAR_HEIGHT + theme.spacing.lg }}
@@ -114,15 +139,7 @@ export default function Page() {
           };
           return <ListItem {...props} />;
         }}
-        ListHeaderComponent={() => {
-          return (
-            <View style={{ paddingHorizontal: theme.spacing.lg, paddingBottom: theme.spacing.lg, paddingTop: theme.spacing.md }}>
-              <Text variant="bodyMedium" style={{ color: theme.colors.grey2 }}>
-                {mappingDesc[type].desc}
-              </Text>
-            </View>
-          );
-        }}
+        ListHeaderComponent={header}
         ListFooterComponent={() => {
           if (loading) {
             return (

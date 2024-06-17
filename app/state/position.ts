@@ -12,7 +12,7 @@ const init_state = {
 
 function getWallDistance(radio: number) {
   const maxDistance = 300;
-  const minDistance = 100;
+  const minDistance = 50;
   return maxDistance - radio * (maxDistance - minDistance);
 }
 
