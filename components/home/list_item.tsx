@@ -12,7 +12,7 @@ import { Routes } from "@/app/composable/routes";
 export interface Props {
   name: string;
   briefDesc?: string;
-  images?: string[];
+  images?: string[] | number[];
   href?: Href;
   onPress?: () => void;
   actions?: React.ReactNode[];

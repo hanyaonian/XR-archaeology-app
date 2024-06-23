@@ -6,7 +6,7 @@ import { createRef, useEffect, useMemo, useState } from "react";
 import { Platform, StyleProp, View, ViewStyle } from "react-native";
 import MapView, { LatLng, MapType, Marker, Region } from "react-native-maps";
 import ArrowLine from "./arrow_line";
-import { vedi_point } from "@/app/composable/ar";
+import { vedi_point } from "@/app/ar/composable/ar";
 import { Routes } from "@/app/composable/routes";
 
 export interface Props {

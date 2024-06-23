@@ -1,5 +1,5 @@
 import { Text, Button } from "react-native-paper";
-import { StyleSheet, View, FlatList, Image, Alert } from "react-native";
+import { StyleSheet, View, FlatList, Image, Alert, Pressable } from "react-native";
 import { useAppTheme } from "@providers/style_provider";
 import { GPSIcon, BookmarkIcon, BookmarkOutlineIcon } from "@components/icons";
 import { useRouter } from "expo-router";
@@ -60,6 +60,14 @@ export default function ExploreItem<T extends GeoPoint>(item: ItemProps<T>) {
     withImage: !!getImages && !!images && images.length,
   });
 
+  const toDesc = () => {
+    modalCLose?.();
+    router.push({
+      pathname: Routes.Detail,
+      params: { id, service: "attractions" },
+    });
+  };
+
   const startARTour = async () => {
     modalCLose?.();
     const ids = points.map(({ _id }) => _id);
@@ -73,83 +81,85 @@ export default function ExploreItem<T extends GeoPoint>(item: ItemProps<T>) {
         },
       });
 
-      try {
-        const { coords: position } = await ExpoLocation.getCurrentPositionAsync();
-        if (distanceFromLatLonInKm(position, point) > 5) {
-          Alert.alert("> 5km Distance Alert", "You're too far from the destination.\nDo you still want to proceed with the AR tour?", [
-            { text: "Cancel", style: "cancel" },
-            { text: "Confirm", onPress: goTo },
-          ]);
-        } else {
-          goTo();
-        }
-      } catch (err) {
-        Alert.alert("Get Current Location Error", err.message, [ { text: "Ok", style: "cancel" }, ])
+    try {
+      const { coords: position } = await ExpoLocation.getCurrentPositionAsync();
+      if (distanceFromLatLonInKm(position, point) > 5) {
+        Alert.alert("> 5km Distance Alert", "You're too far from the destination.\nDo you still want to proceed with the AR tour?", [
+          { text: "Cancel", style: "cancel" },
+          { text: "Confirm", onPress: goTo },
+        ]);
+      } else {
+        goTo();
       }
+    } catch (err) {
+      Alert.alert("Get Current Location Error", err.message, [{ text: "Ok", style: "cancel" }]);
+    }
   };
 
   return (
-    <View style={_style.item}>
-      <>
-        <Text variant="labelLarge" style={{ color: theme.colors.text }}>
-          {title}
-        </Text>
-        {length && (
-          <Text variant="labelMedium" style={_style.lengthText}>
-            {length} km
+    <Pressable onPress={() => toDesc()}>
+      <View style={_style.item}>
+        <>
+          <Text variant="labelLarge" style={{ color: theme.colors.text }}>
+            {title}
           </Text>
-        )}
-        {type && (
-          <View style={_style.rowLayout}>
-            <Text variant="labelMedium">
-              {type}
-              {tags ? " | " : ""}
+          {length && (
+            <Text variant="labelMedium" style={_style.lengthText}>
+              {length} km
             </Text>
-            {tags && (
-              <Text variant="labelMedium" style={[{ color: theme.colors.primary }]}>
-                {tags}
+          )}
+          {type && (
+            <View style={_style.rowLayout}>
+              <Text variant="labelMedium">
+                {type}
+                {tags ? " | " : ""}
               </Text>
-            )}
-          </View>
-        )}
-        {images && (
-          <FlatList
-            horizontal
-            ItemSeparatorComponent={() => <View style={{ width: theme.spacing.sm }} />}
-            data={images}
-            renderItem={({ item }) => <Image style={_style.image} source={{ uri: item }} />}
-          />
-        )}
-      </>
-      <View style={{ display: "flex", flexDirection: "row", columnGap: theme.spacing.xs, marginTop: theme.spacing.xs }}>
-        <Button
-          compact
-          style={{ borderRadius: 999 }}
-          contentStyle={_style.button}
-          textColor={theme.colors.textOnPrimary}
-          mode="contained"
-          icon={() => <GPSIcon fill={theme.colors.textOnPrimary} style={[_style.icon, { maxHeight: 18 }]} />}
-          onPress={startARTour}
-        >
-          Start
-        </Button>
-        <Button
-          compact
-          style={[{ borderWidth: 2, borderRadius: 999, borderColor: theme.colors.primary }]}
-          contentStyle={_style.button}
-          mode="outlined"
-          icon={() =>
-            isSaved ? (
-              <BookmarkIcon style={_style.icon} fill={theme.colors.primary} />
-            ) : (
-              <BookmarkOutlineIcon style={_style.icon} fill={theme.colors.primary} />
-            )
-          }
-        >
-          {isSaved ? "Saved" : "Save"}
-        </Button>
+              {tags && (
+                <Text variant="labelMedium" style={[{ color: theme.colors.primary }]}>
+                  {tags}
+                </Text>
+              )}
+            </View>
+          )}
+          {images && (
+            <FlatList
+              horizontal
+              ItemSeparatorComponent={() => <View style={{ width: theme.spacing.sm }} />}
+              data={images}
+              renderItem={({ item }) => <Image style={_style.image} source={{ uri: item }} />}
+            />
+          )}
+        </>
+        <View style={{ display: "flex", flexDirection: "row", columnGap: theme.spacing.xs, marginTop: theme.spacing.xs }}>
+          <Button
+            compact
+            style={{ borderRadius: 999 }}
+            contentStyle={_style.button}
+            textColor={theme.colors.textOnPrimary}
+            mode="contained"
+            icon={() => <GPSIcon fill={theme.colors.textOnPrimary} style={[_style.icon, { maxHeight: 18 }]} />}
+            onPress={startARTour}
+          >
+            Start
+          </Button>
+          <Button
+            compact
+            style={[{ borderWidth: 2, borderRadius: 999, borderColor: theme.colors.primary }]}
+            contentStyle={_style.button}
+            mode="outlined"
+            icon={() =>
+              isSaved ? (
+                <BookmarkIcon style={_style.icon} fill={theme.colors.primary} />
+              ) : (
+                <BookmarkOutlineIcon style={_style.icon} fill={theme.colors.primary} />
+              )
+            }
+          >
+            {isSaved ? "Saved" : "Save"}
+          </Button>
+        </View>
       </View>
-    </View>
+    </Pressable>
   );
 }
 

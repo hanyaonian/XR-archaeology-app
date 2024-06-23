@@ -97,7 +97,7 @@ export default function Page() {
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: NAVBAR_HEIGHT + theme.spacing.md }}>
         <View style={style.sectionHeader}>
           <Text variant="titleMedium" style={style.title}>
-            Culinary Delights
+            Life Essentials
           </Text>
           <Link href={{ pathname: Routes.Attractions, params: { type: "Restaurant" } }} asChild>
             <Pressable style={style.button}>

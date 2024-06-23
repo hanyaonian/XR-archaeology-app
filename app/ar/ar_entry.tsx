@@ -4,41 +4,28 @@ import { AppTheme, useAppTheme } from "@/providers/style_provider";
 import _ from "lodash";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
+import { WALL_INFOS } from "./composable/ar";
 
 export default function Page() {
   const { theme } = useAppTheme();
   const style = useStyle({ theme });
-  const walls = [
-{
-    name: 'Vedi Fortress: Lower wall',
-    briefDesc: 'Vedi Fortress: Lower wall',
-    showNavigate: false,
-    images: [require('@/assets/images/wall4.jpg')],
-    href: { pathname: Routes.ArTest, params: { id: 1 } },
-},
-{
-    name: 'Vedi Fortress: Upper wall',
-    briefDesc: 'Vedi Fortress: Upper wall',
-    showNavigate: false,
-    images: [require('@/assets/images/wall3.jpg')],
-    href: { pathname: Routes.ArTest, params: { id: 2 } },
-}
-  ];
+  const walls = WALL_INFOS.map((point) => {
+    return { ...point, href: { pathname: Routes.ArTest, params: { id: point.id } } };
+  });
 
   return (
     <MainBody padding={{ top: 0 }}>
       <AppBar title="Virtual reconstruction" showBack />
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: NAVBAR_HEIGHT + theme.spacing.md }}>
-        <View style={style.sectionHeader}>
-        </View>
+        <View style={style.sectionHeader}></View>
         <Text variant="bodyMedium" style={style.sectionDesc}>
           another description
         </Text>
-          <View style={style.list}>
-            {walls.map((item, index) => {
-              return <ListItem {...item} key={index} />;
-            })}
-          </View>
+        <View style={style.list}>
+          {walls.map((item, index) => {
+            return <ListItem {...item} key={index} />;
+          })}
+        </View>
       </ScrollView>
     </MainBody>
   );

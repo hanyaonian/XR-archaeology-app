@@ -20,10 +20,10 @@ function Layout({ children, orientation }: { children?: JSX.Element | (JSX.Eleme
 
 export default function Home() {
   const { theme } = useAppTheme();
-  const { width: screenWidth } = useWindowDimensions();
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
   const [topSectionHeight, setTopSectionHeight] = useState(0);
 
-  const style = useStyle({ theme, screenWidth });
+  const style = useStyle({ theme, screenWidth, screenHeight });
 
   const { user } = useAuth();
   const authenticated = !!user && !!user._id;
@@ -55,12 +55,12 @@ export default function Home() {
             {`Welcome to \nthe Vedi River Valley!`}
           </Text>
 
-          <IconBtn
-            icon="createAR"
-            iconProps={{ fill: theme.colors.text }}
-            onPress={() => {
-              router.push(Routes.ArEntry);
-            }} />
+        {__DEV__ && <IconBtn
+          icon="createAR"
+          iconProps={{ fill: theme.colors.text }}
+          onPress={() => {
+            router.push(Routes.ArEntry);
+        }} />}
         </View>
 
         {/* Top Section */}
@@ -116,7 +116,7 @@ export default function Home() {
                 <ImageBackground source={require("@assets/images/food.jpg")} imageStyle={style.image}>
                   <View style={style.subThumb}>
                     <Text variant="labelLarge" style={[style.label, { left: theme.spacing.xxs, bottom: theme.spacing.xs, position: "absolute" }]}>
-                      Food & Lodging
+                      Resturants & Accommodations
                     </Text>
                   </View>
                 </ImageBackground>
@@ -200,7 +200,7 @@ export default function Home() {
   );
 }
 
-const useStyle = ({ theme, screenWidth }: { theme: AppTheme; screenWidth: number }) =>
+const useStyle = ({ theme, screenWidth, screenHeight }: { theme: AppTheme; screenWidth: number, screenHeight: number }) =>
   StyleSheet.create({
     appBarDecorateBox: {
       backgroundColor: theme.colors.primary,
@@ -221,7 +221,7 @@ const useStyle = ({ theme, screenWidth }: { theme: AppTheme; screenWidth: number
     subThumbContainer: {
       borderRadius: theme.spacing.xs,
       overflow: "hidden",
-      height: Math.round((((screenWidth - theme.spacing.lg * 2 - theme.spacing.md) / 2) * 9) / 16),
+      height: Math.round((((screenHeight - theme.spacing.lg * 2 - theme.spacing.md) / 2) * 3) / 9),
       width: Math.round((screenWidth - theme.spacing.lg * 2 - theme.spacing.md) / 2 - 1),
       position: "relative",
       elevation: 8,

@@ -58,13 +58,13 @@ export default function Page() {
 
   const searched_list =  useMemo(() => {
     const search_text = search.trim();
-    if (!search_text) {
-      return attractions;
+    if (!search_text.length) {
+      return attractions.slice();
     }
     return attractions.filter(attraction => {
       return attraction.name.toLowerCase().includes(search_text.toLowerCase())
     })
-  }, [search])
+  }, [search, attractions])
 
   async function syncData() {
     if (cursor.current != 0 && cursor.current >= total.current) return;

@@ -18,6 +18,8 @@ import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/Vi
 import { useAuth } from "@/providers/auth_provider";
 import { ARLocationProvider, useARLocation } from "@/providers/ar_location_provider";
 import * as Vector from "@/plugins/vector";
+import { useARReconstruction } from "./composable/ar";
+import { useReconstructionModal } from "./composable/ar_modal";
 
 const ICON_BUTTON_SIZE = 48;
 const MINI_MAP_HEIGHT = 134;
@@ -291,8 +293,19 @@ function ARExplorePage() {
     [initHeading, initLocation, comment]
   );
 
+  const { Modal, showModal, modalVisible } = useReconstructionModal();
   const degree = useMemo(computeBearingDiff, [location, nearestPoint, heading, initHeading]);
   const distanceText = useMemo(getNearestDistance, [location, points, targetIndex]);
+
+  useEffect(() => {
+    const ar_info = useARReconstruction(location);
+    if (ar_info && !modalVisible) {
+      showModal({
+        info: ar_info,
+      });
+    }
+  }, [location]);
+
   const geoLoading: boolean = !(location && initHeading);
   const loading: boolean = geoLoading || !cameraReady || !dataLoaded;
 
@@ -463,6 +476,7 @@ function ARExplorePage() {
           )}
         </>
       )}
+      <Modal></Modal>
     </MainBody>
   );
 }

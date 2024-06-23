@@ -13,6 +13,7 @@ import { Alert, ImageBackground, ScrollView, StyleSheet, View, useWindowDimensio
 import { Button, Text } from "react-native-paper";
 import * as ExpoLocation from "expo-location";
 import { Routes } from "@/app/composable/routes";
+import { Tts } from "@/components/common/tts";
 
 export default function Page() {
   const feathers = useFeathers();
@@ -211,14 +212,6 @@ export default function Page() {
             </View>
           ) : null}
 
-          {route.content ? (
-            <View style={{ flexDirection: "column", rowGap: 1.5 * theme.spacing.xl }}>
-              {route.content.map((item, index) => (
-                <ContentItem content={item} key={index} imageStyle={{ marginHorizontal: theme.spacing.lg, borderRadius: theme.spacing.xs }} />
-              ))}
-            </View>
-          ) : null}
-
           <View style={{ flexDirection: "column", rowGap: theme.spacing.xl, marginTop: theme.spacing.xl * 1.5 }}>
             {points
               ? points.map((point, index) => (
@@ -251,16 +244,15 @@ export default function Page() {
                     </View>
 
                     {point.images && <Carousel images={point.images} />}
-
-                    <Text
+                    {point.desc && <Tts
+                      text={point.desc}
                       variant="bodyMedium"
                       style={{
                         color: theme.colors.text,
                         paddingHorizontal: theme.spacing.lg,
                       }}
                     >
-                      {point.desc || ""}
-                    </Text>
+                    </Tts>}
                   </View>
                 ))
               : null}

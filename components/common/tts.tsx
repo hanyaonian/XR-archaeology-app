@@ -16,9 +16,13 @@ export function Tts(props: { text: string } & any) {
     }
   }, [])
 
-  const useTts = () => {
+  const useTts = async () => {
     if (status === 'idle') {
-      Speech.speak(text);
+      Speech.speak(text, {
+        onDone: () => {
+          setStatus('idle');
+        }
+      });
       setStatus('play')
     } else {
       Speech.stop();

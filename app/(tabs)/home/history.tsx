@@ -37,7 +37,7 @@ export default function HistoryPage() {
         <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: NAVBAR_HEIGHT + theme.spacing.md, paddingTop: theme.spacing.lg }}>
           <View style={{ flexDirection: "column", rowGap: 1.5 * theme.spacing.xl }}>
             {doc.content.map((content, index) => (
-              <ContentItem content={content} key={index} />
+              <ContentItem content={content} useTts={true} key={index} />
             ))}
           </View>
           <Text variant="titleMedium" style={{ paddingHorizontal: theme.spacing.lg, marginTop: theme.spacing.xl }}>

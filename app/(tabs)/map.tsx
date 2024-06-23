@@ -13,7 +13,7 @@ import { Paginated, useFeathers } from "@/providers/feathers_provider";
 import { AttractionType, GeoPoint } from "@/models";
 import { getCurrentPositionAsync } from "expo-location";
 import { Button, Text } from "react-native-paper";
-import { vedi_point } from "../composable/ar";
+import { vedi_point } from "../ar/composable/ar";
 import { Routes } from "../composable/routes";
 
 const ITEM_WIDTH = 300;

@@ -20,6 +20,7 @@ export enum Routes {
 
   // AR - for wall
   ArEntry = '/ar/ar_entry',
+  ArGuide = '/ar/ar_guide',
   ArTest = '/ar/ar_test',
   ArWall = '/ar/ar_wall',
   ArPlacement = '/ar/ar_placement',

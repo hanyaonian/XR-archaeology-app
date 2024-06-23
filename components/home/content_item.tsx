@@ -11,10 +11,11 @@ export interface Props {
   imageRatio?: number;
   animating?: boolean;
   duration?: number;
+  useTts?: boolean;
   imageStyle?: ViewStyle & ImageStyle;
 }
 
-export default function ContentItem({ content, ...props }: Props) {
+export default function ContentItem({ content, useTts = false, ...props }: Props) {
   const { theme } = useAppTheme();
   return (
     <View>
@@ -22,11 +23,17 @@ export default function ContentItem({ content, ...props }: Props) {
         {content.heading.toString()}
       </Text>
       {content.images && <Carousel images={content.images} imageStyle={props.imageStyle} />}
-      <Tts
-        variant="bodyMedium"
-        text={content.desc?.toString() ?? ""}
-        style={{ color: theme.colors.text, marginTop: theme.spacing.md, paddingHorizontal: theme.spacing.lg }}
-      ></Tts>
+      {useTts ? (
+        <Tts
+          variant="bodyMedium"
+          text={content.desc?.toString() ?? ""}
+          style={{ color: theme.colors.text, marginTop: theme.spacing.md, paddingHorizontal: theme.spacing.lg }}
+        ></Tts>
+      ) : (
+        <Text variant="bodyMedium" style={{ color: theme.colors.text, marginTop: theme.spacing.md, paddingHorizontal: theme.spacing.lg }}>
+          {content.desc?.toString() ?? ""}
+        </Text>
+      )}
     </View>
   );
 }

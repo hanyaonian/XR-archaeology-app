@@ -24,16 +24,13 @@ import { useArModelStore } from "@/app/state/position";
 import { useAppStore } from "@/app/state/app";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
+import { ARInfo, WALL_INFOS } from "./composable/ar";
 
 const GuideScene = observer(() => {
   const [lastforward, setForward] = useState([0, 0, 0]);
   const ModelStore = useArModelStore();
   const params = useLocalSearchParams<{ id?: "1" | "2" }>();
-  const wall_obj_map = {
-    1: require("@assets/models/wall/wall1.glb"),
-    2: require("@assets/models/wall/wall2.glb"),
-  };
-  const wall_model = wall_obj_map[params.id ?? "1"];
+  const wall = WALL_INFOS.find(wall => wall.id === Number(params.id)) as ARInfo;
 
   useEffect(() => {
     if (ModelStore.stage !== "unlock") {
@@ -67,7 +64,7 @@ const GuideScene = observer(() => {
           )}
         </ViroARCamera>
         <Viro3DObject
-          source={wall_model}
+          source={wall.model}
           rotation={toJS(ModelStore.rotation)}
           position={toJS(ModelStore.position)}
           scale={[1, 1, 1]}
