@@ -116,7 +116,7 @@ export default function Home() {
                 <ImageBackground source={require("@assets/images/food.jpg")} imageStyle={style.image}>
                   <View style={style.subThumb}>
                     <Text variant="labelLarge" style={[style.label, { left: theme.spacing.xxs, bottom: theme.spacing.xs, position: "absolute" }]}>
-                      Resturants & Accommodations
+                    Food & Lodging
                     </Text>
                   </View>
                 </ImageBackground>

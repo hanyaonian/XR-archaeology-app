@@ -7,8 +7,9 @@ import { Link } from "expo-router";
 import _ from "lodash";
 import moment from "moment";
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
+import { Text } from "react-native-paper";
+import { TabView, SceneMap } from "react-native-tab-view";
 
 interface BusinessHour {
   openTime: Date;
@@ -17,8 +18,15 @@ interface BusinessHour {
 
 export default function Page() {
   const { theme } = useAppTheme();
+  const layout = useWindowDimensions();
   const style = useStyle({ theme });
   const feathers = useFeathers();
+  const [tabIndex, setTabIndex] = useState(0);
+  const tabRoutes = [
+    { key: "Resturants", title: "Resturants" },
+    { key: "Accommodations", title: "Accommodations" },
+  ];
+
   const [items, setItems] = useState<Attraction[]>([]);
   const restaurants = useMemo(() => items.filter((it) => it.type === "Restaurant"), [items]);
   const lodgings = useMemo(() => items.filter((it) => it.type === "Lodging"), [items]);
@@ -91,13 +99,12 @@ export default function Page() {
     }
   }
 
-  return (
-    <MainBody padding={{ top: 0 }}>
-      <AppBar showBack />
+  const ResturantView = () => {
+    return (
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: NAVBAR_HEIGHT + theme.spacing.md }}>
         <View style={style.sectionHeader}>
           <Text variant="titleMedium" style={style.title}>
-            Life Essentials
+            {''}
           </Text>
           <Link href={{ pathname: Routes.Attractions, params: { type: "Restaurant" } }} asChild>
             <Pressable style={style.button}>
@@ -107,9 +114,6 @@ export default function Page() {
             </Pressable>
           </Link>
         </View>
-        <Text variant="bodyMedium" style={style.sectionDesc}>
-          Armenian cuisine is known for its rich flavours and unique combinations of ingredients
-        </Text>
         {restaurants && (
           <View style={style.list}>
             {restaurants.map((item) => {
@@ -128,9 +132,16 @@ export default function Page() {
             })}
           </View>
         )}
+      </ScrollView>
+    );
+  };
+
+  const AccommodationView = () => {
+    return (
+      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: NAVBAR_HEIGHT + theme.spacing.md }}>
         <View style={style.sectionHeader}>
           <Text variant="titleMedium" style={style.title}>
-            Lodgings
+            {''}
           </Text>
           <Link href={{ pathname: Routes.Attractions, params: { type: "Lodging" } }} asChild>
             <Pressable style={style.button}>
@@ -157,6 +168,23 @@ export default function Page() {
           </View>
         )}
       </ScrollView>
+    );
+  };
+
+  const renderScene = SceneMap({
+    Resturants: ResturantView,
+    Accommodations: AccommodationView,
+  });
+
+  return (
+    <MainBody padding={{ top: 0 }}>
+      <AppBar showBack title="Food & Lodging" />
+      <TabView
+        navigationState={{ index: tabIndex, routes: tabRoutes }}
+        renderScene={renderScene}
+        onIndexChange={setTabIndex}
+        initialLayout={{ width: layout.width }}
+      />
     </MainBody>
   );
 }

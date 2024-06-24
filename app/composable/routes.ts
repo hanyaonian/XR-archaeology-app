@@ -26,5 +26,3 @@ export enum Routes {
   ArPlacement = '/ar/ar_placement',
   ArExplore = '/ar/ar_explore',
 }
-
-export enum Service { }
