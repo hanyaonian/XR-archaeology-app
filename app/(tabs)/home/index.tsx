@@ -55,12 +55,12 @@ export default function Home() {
             {`Welcome to \nthe Vedi River Valley!`}
           </Text>
 
-        {__DEV__ && <IconBtn
+        <IconBtn
           icon="createAR"
           iconProps={{ fill: theme.colors.text }}
           onPress={() => {
             router.push(Routes.ArEntry);
-        }} />}
+        }} />
         </View>
 
         {/* Top Section */}

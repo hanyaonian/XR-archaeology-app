@@ -4,7 +4,7 @@ import { MainBody, IconBtn, ARExploreProps, ARExploreScene, CommentDialog, Explo
 import { ChevronLeftIcon, CircleTickIcon, AddCommentIcon } from "@components/icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState, useEffect, createRef, useCallback, useRef, useMemo } from "react";
-import { View, StyleSheet, useWindowDimensions, Platform, Image } from "react-native";
+import { View, StyleSheet, useWindowDimensions, Platform, Image, Modal } from "react-native";
 import _ from "lodash";
 import { ActivityIndicator, Button, Text } from "react-native-paper";
 import MapView, { LatLng, Marker } from "react-native-maps";
@@ -19,7 +19,8 @@ import { useAuth } from "@/providers/auth_provider";
 import { ARLocationProvider, useARLocation } from "@/providers/ar_location_provider";
 import * as Vector from "@/plugins/vector";
 import { useARReconstruction } from "./composable/ar";
-import { useReconstructionModal } from "./composable/ar_modal";
+import { ARInfo } from "./composable/ar";
+import { Routes } from "../composable/routes";
 
 const ICON_BUTTON_SIZE = 48;
 const MINI_MAP_HEIGHT = 134;
@@ -293,16 +294,27 @@ function ARExplorePage() {
     [initHeading, initLocation, comment]
   );
 
-  const { Modal, showModal, modalVisible } = useReconstructionModal();
+  // const { showModal } = useReconstructionModal();
   const degree = useMemo(computeBearingDiff, [location, nearestPoint, heading, initHeading]);
   const distanceText = useMemo(getNearestDistance, [location, points, targetIndex]);
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [ar_info, setArInfo] = useState<ARInfo>();
+  const handleClose = () => {
+    setModalVisible(false);
+  };
+  const gotoReconstructionGuide = () => {
+    setModalVisible(false);
+    if (ar_info) {
+      router.replace({ pathname: Routes.ArGuide, params: { id: ar_info.id } });
+    }
+  };
 
   useEffect(() => {
     const ar_info = useARReconstruction(location);
     if (ar_info && !modalVisible) {
-      showModal({
-        info: ar_info,
-      });
+      setArInfo(ar_info);
+      setModalVisible(true);
     }
   }, [location]);
 
@@ -476,7 +488,32 @@ function ARExplorePage() {
           )}
         </>
       )}
-      <Modal></Modal>
+      <Modal animationType="slide" transparent={false} visible={modalVisible}>
+        <View style={style.modalContainer}>
+          <Text
+            style={style.modalText}
+          >{`You are near to \n \n ${ar_info?.name} \n \n Do you want to try the reconstruction function with AR?`}</Text>
+          {ar_info?.images?.[0] && <Image source={ar_info?.images?.[0]} style={style.modalImage} />}
+          <Button
+            style={style.modalButton}
+            mode="contained"
+            buttonColor={theme.colors.primary}
+            labelStyle={{ marginHorizontal: theme.spacing.lg, marginVertical: theme.spacing.sm }}
+            onPress={gotoReconstructionGuide}
+          >
+            <Text style={style.modalButtonText}>Let's See!</Text>
+          </Button>
+          <Button
+            style={style.modalButton}
+            mode="contained"
+            buttonColor={theme.colors.error}
+            labelStyle={{ marginHorizontal: theme.spacing.lg, marginVertical: theme.spacing.sm }}
+            onPress={handleClose}
+          >
+            <Text style={style.modalButtonText}>Not interest</Text>
+          </Button>
+        </View>
+      </Modal>
     </MainBody>
   );
 }
@@ -570,5 +607,35 @@ const useStyle = ({ theme }: { theme: AppTheme }) =>
       flexDirection: "column",
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.md,
+    },
+    container: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      marginTop: 20,
+    },
+    modalContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 20,
+      backgroundColor: "white",
+    },
+    modalText: {
+      textAlign: "center",
+      marginBottom: 20,
+      fontSize: 16,
+    },
+    modalImage: {
+      resizeMode: "cover",
+      width: "100%",
+      height: 200,
+    },
+    modalButton: {
+      marginTop: 20,
+    },
+    modalButtonText: {
+      color: "white",
+      textAlign: "center",
     },
   });

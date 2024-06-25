@@ -14,15 +14,16 @@ export const WALL_INFOS: {
   [key: string]: any
 }[] = [
   {
+    id: 3,
     point: {
-      latitude: 39.925806,
-      longitude: 44.7415,
+      latitude: 39.9261389,
+      longitude: 44.7382778,
     },
-    id: 1,
-    name: 'Vedi Fortress: Lower wall',
-    briefDesc: 'Vedi Fortress: Lower wall',
-    model: require("@assets/models/wall/wall1.glb"),
-    images: [require('@/assets/images/wall4.jpg')],
+    reversed: true,
+    name: 'Vedi Fortress: Lower wall From Back',
+    briefDesc: 'Vedi Fortress: Lower wall From Back',
+    model: require("@assets/models/wall/wall1-reverse.glb"),
+    images: [require('@/assets/images/wall2.jpg')],
   },
   {
     point: {
@@ -36,17 +37,16 @@ export const WALL_INFOS: {
     images: [require('@/assets/images/wall3.jpg')],
   },
   {
-    id: 3,
     point: {
-      latitude: 39.9261389,
-      longitude: 44.7382778,
+      latitude: 39.925806,
+      longitude: 44.7415,
     },
-    reversed: true,
-    name: 'Vedi Fortress: Lower wall From Back',
-    briefDesc: 'Vedi Fortress: Lower wall From Back',
-    model: require("@assets/models/wall/wall1-reverse.glb"),
-    images: [require('@/assets/images/wall2.jpg')],
-  }
+    id: 1,
+    name: 'Vedi Fortress: Lower wall',
+    briefDesc: 'Vedi Fortress: Lower wall',
+    model: require("@assets/models/wall/wall1.glb"),
+    images: [require('@/assets/images/wall4.jpg')],
+  },
 ] as const;
 
 export const vedi_point = {
