@@ -1,12 +1,13 @@
 import { Button, Text } from "react-native-paper";
 import { IconBtn, MainBody, NAVBAR_HEIGHT } from "@components";
-import { View, StyleSheet, ImageBackground, useWindowDimensions, Pressable, ScrollView, Image } from "react-native";
-import { useState } from "react";
+import { View, StyleSheet, ImageBackground, useWindowDimensions, Pressable, ScrollView, Image, Linking } from "react-native";
+import { useState, Children } from "react";
 import { AppTheme, useAppTheme } from "@providers/style_provider";
 import { useAuth } from "@providers/auth_provider";
 import { Link, router } from "expo-router";
 import { Orientation, isPortrait, useOrientation } from "@/plugins/orientation";
 import { Routes } from "@/app/composable/routes";
+import { Entries } from "@/app/composable/entries";
 
 const DECORATE_BOX_HEIGHT = 124;
 
@@ -29,6 +30,36 @@ export default function Home() {
   const authenticated = !!user && !!user._id;
   const orientation = useOrientation();
 
+  const CardView = (params: { name: string; link?: string; route?: any; image: number; index: number }) => {
+    const { link, route } = params;
+    const Container = ({ children }) => {
+      if (route) {
+        return (
+          <Link key={params.index} href={params.route} asChild>
+            {children}
+          </Link>
+        );
+      }
+      return <>{children}</>;
+    };
+    const toLink = () => {
+      if (link) Linking.openURL(link);
+    };
+    return (
+      <Container key={params.index}>
+        <Pressable onPress={toLink} style={style.subThumbContainer}>
+          <ImageBackground source={params.image} imageStyle={style.image}>
+            <View style={style.subThumb}>
+              <Text variant="labelLarge" style={[style.label, params.index % 2 === 0 ? style.leftcard : style.rightcard]}>
+                {params.name}
+              </Text>
+            </View>
+          </ImageBackground>
+        </Pressable>
+      </Container>
+    );
+  };
+
   return (
     <MainBody>
       <Layout orientation={orientation}>
@@ -44,23 +75,26 @@ export default function Home() {
           }}
         />
         <View style={style.appBarDecorateBox} />
-        <View style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          paddingTop: theme.spacing.md,
-          paddingBottom: theme.spacing.xs,
-          paddingHorizontal: theme.spacing.lg
-        }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            paddingTop: theme.spacing.md,
+            paddingBottom: theme.spacing.xs,
+            paddingHorizontal: theme.spacing.lg,
+          }}
+        >
           <Text variant="titleMedium" style={{ color: theme.colors.background }}>
             {`Welcome to \nthe Vedi River Valley!`}
           </Text>
 
-        <IconBtn
-          icon="createAR"
-          iconProps={{ fill: theme.colors.text }}
-          onPress={() => {
-            router.push(Routes.ArEntry);
-        }} />
+          <IconBtn
+            icon="createAR"
+            iconProps={{ fill: theme.colors.text }}
+            onPress={() => {
+              router.push(Routes.ArEntry);
+            }}
+          />
         </View>
 
         {/* Top Section */}
@@ -89,50 +123,7 @@ export default function Home() {
           </Link>
 
           <View style={{ columnGap: theme.spacing.md, rowGap: theme.spacing.sm, flexDirection: "row", flexWrap: "wrap" }}>
-            <Link href={{ pathname: Routes.Attractions, params: { type: "Attraction" } }} asChild>
-              <Pressable style={style.subThumbContainer}>
-                <ImageBackground source={require("@assets/images/attraction.jpeg")} imageStyle={style.image}>
-                  <View style={style.subThumb}>
-                    <Text variant="labelLarge" style={[style.label, { top: theme.spacing.xxs, left: theme.spacing.xs, position: "absolute" }]}>
-                      Attractions
-                    </Text>
-                  </View>
-                </ImageBackground>
-              </Pressable>
-            </Link>
-            <Link href={Routes.Hiking} asChild>
-              <Pressable style={style.subThumbContainer}>
-                <ImageBackground source={require("@assets/images/hiking.jpeg")} imageStyle={style.image}>
-                  <View style={style.subThumb}>
-                    <Text variant="labelLarge" style={[style.label, { top: theme.spacing.xxs, right: theme.spacing.xs, position: "absolute" }]}>
-                      Hiking
-                    </Text>
-                  </View>
-                </ImageBackground>
-              </Pressable>
-            </Link>
-            <Link href={Routes.Living} asChild>
-              <Pressable style={style.subThumbContainer}>
-                <ImageBackground source={require("@assets/images/food.jpg")} imageStyle={style.image}>
-                  <View style={style.subThumb}>
-                    <Text variant="labelLarge" style={[style.label, { left: theme.spacing.xxs, bottom: theme.spacing.xs, position: "absolute" }]}>
-                    Food & Lodging
-                    </Text>
-                  </View>
-                </ImageBackground>
-              </Pressable>
-            </Link>
-            <Link href={Routes.Events} asChild>
-              <Pressable style={style.subThumbContainer}>
-                <ImageBackground source={require("@assets/images/events.jpg")} imageStyle={style.image}>
-                  <View style={style.subThumb}>
-                    <Text variant="labelLarge" style={[style.label, { bottom: theme.spacing.xxs, right: theme.spacing.xs, position: "absolute" }]}>
-                      Events
-                    </Text>
-                  </View>
-                </ImageBackground>
-              </Pressable>
-            </Link>
+            {Entries.map((v, index) => CardView({ ...v, index }))}
           </View>
         </View>
         {/* Login / Favorite Place*/}
@@ -200,7 +191,7 @@ export default function Home() {
   );
 }
 
-const useStyle = ({ theme, screenWidth, screenHeight }: { theme: AppTheme; screenWidth: number, screenHeight: number }) =>
+const useStyle = ({ theme, screenWidth, screenHeight }: { theme: AppTheme; screenWidth: number; screenHeight: number }) =>
   StyleSheet.create({
     appBarDecorateBox: {
       backgroundColor: theme.colors.primary,
@@ -221,7 +212,7 @@ const useStyle = ({ theme, screenWidth, screenHeight }: { theme: AppTheme; scree
     subThumbContainer: {
       borderRadius: theme.spacing.xs,
       overflow: "hidden",
-      height: Math.round((((screenHeight - theme.spacing.lg * 2 - theme.spacing.md) / 2) * 3) / 9),
+      height: Math.round((((screenHeight - theme.spacing.lg * 2 - theme.spacing.md) / 2) * 2.5) / 9),
       width: Math.round((screenWidth - theme.spacing.lg * 2 - theme.spacing.md) / 2 - 1),
       position: "relative",
       elevation: 8,
@@ -257,5 +248,15 @@ const useStyle = ({ theme, screenWidth, screenHeight }: { theme: AppTheme; scree
       textShadowColor: "black",
       textShadowRadius: 8,
       elevation: 8,
+    },
+    leftcard: {
+      top: theme.spacing.xxs,
+      left: theme.spacing.xs,
+      position: "absolute",
+    },
+    rightcard: {
+      top: theme.spacing.xxs,
+      right: theme.spacing.xs,
+      position: "absolute",
     },
   });

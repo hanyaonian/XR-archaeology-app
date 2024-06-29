@@ -52,7 +52,7 @@ const GuideScene = observer(() => {
   return (
     <>
       <ViroARScene onCameraTransformUpdate={(info) => updateCameraPosition(info)}>
-        <ViroAmbientLight color="#ffffff" intensity={200} />
+        <ViroAmbientLight color="#ffffff" intensity={600} />
         <ViroARCamera>
           {ModelStore.stage === "unlock" && (
             <ViroText

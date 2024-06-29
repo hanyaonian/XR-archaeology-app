@@ -1,5 +1,5 @@
 import { Text, Button } from "react-native-paper";
-import { StyleSheet, View, FlatList, Image, Alert, Pressable } from "react-native";
+import { StyleSheet, View, FlatList, Image, Alert, Pressable, Linking } from "react-native";
 import { useAppTheme } from "@providers/style_provider";
 import { GPSIcon, BookmarkIcon, BookmarkOutlineIcon } from "@components/icons";
 import { useRouter } from "expo-router";
@@ -67,6 +67,10 @@ export default function ExploreItem<T extends GeoPoint>(item: ItemProps<T>) {
       params: { id, service: "attractions" },
     });
   };
+
+  const useGoogleMap = () => {
+    Linking.openURL(`https://google.com/maps/place/${point.latitude}+${point.longitude}`)
+  }
 
   const startARTour = async () => {
     modalCLose?.();
@@ -138,7 +142,8 @@ export default function ExploreItem<T extends GeoPoint>(item: ItemProps<T>) {
             textColor={theme.colors.textOnPrimary}
             mode="contained"
             icon={() => <GPSIcon fill={theme.colors.textOnPrimary} style={[_style.icon, { maxHeight: 18 }]} />}
-            onPress={startARTour}
+            // onPress={startARTour}
+            onPress={useGoogleMap}
           >
             Start
           </Button>

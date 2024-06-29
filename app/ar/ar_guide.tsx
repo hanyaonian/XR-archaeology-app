@@ -2,7 +2,7 @@ import { Routes } from "@/app/composable/routes";
 import { AppBar, MainBody, NAVBAR_HEIGHT } from "@/components";
 import { useAppTheme, AppTheme } from "@/providers/style_provider";
 import { router, useLocalSearchParams } from "expo-router";
-import _, { transform } from "lodash";
+import _ from "lodash";
 import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 

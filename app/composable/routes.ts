@@ -17,6 +17,7 @@ export enum Routes {
   Living = "/home/livings",
   Hiking = "/home/hiking",
   Events = "/home/events",
+  Transportation = "/home/transportation",
 
   // AR - for wall
   ArEntry = '/ar/ar_entry',

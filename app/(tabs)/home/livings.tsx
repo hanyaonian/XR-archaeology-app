@@ -3,7 +3,7 @@ import { AppBar, ListItem, ListItemProps, MainBody, NAVBAR_HEIGHT } from "@/comp
 import { Attraction, OpenHour, Weekday } from "@/models";
 import { Paginated, useFeathers } from "@/providers/feathers_provider";
 import { AppTheme, useAppTheme } from "@/providers/style_provider";
-import { Link } from "expo-router";
+import { Link, useLocalSearchParams } from "expo-router";
 import _ from "lodash";
 import moment from "moment";
 import { useEffect, useMemo, useState } from "react";
@@ -21,11 +21,12 @@ export default function Page() {
   const layout = useWindowDimensions();
   const style = useStyle({ theme });
   const feathers = useFeathers();
-  const [tabIndex, setTabIndex] = useState(0);
+  const params = useLocalSearchParams<{type: string}>();
   const tabRoutes = [
     { key: "Resturants", title: "Resturants" },
     { key: "Accommodations", title: "Accommodations" },
   ];
+  const [tabIndex, setTabIndex] = useState(tabRoutes.findIndex(tab => tab.key === params?.type) ?? 0);
 
   const [items, setItems] = useState<Attraction[]>([]);
   const restaurants = useMemo(() => items.filter((it) => it.type === "Restaurant"), [items]);
