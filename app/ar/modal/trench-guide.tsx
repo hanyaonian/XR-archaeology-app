@@ -1,0 +1,99 @@
+import { Button, Text } from "react-native-paper";
+import { TrenchInfo } from "../fixed-things/ar";
+import { StyleSheet, View } from "react-native";
+import { AppTheme, useAppTheme } from "@/providers/style_provider";
+import { useMemo, useState } from "react";
+import { Image } from "react-native";
+import { Tts } from "@/components/common/tts";
+
+export function TrenchModalBody(props: { trench_info: TrenchInfo; close: () => void }) {
+  const { trench_info, close } = props;
+  const { theme } = useAppTheme();
+  const style = useStyle(theme);
+  const [page, setPage] = useState(0);
+  const min_page = 0;
+  const max_page = trench_info.text.length - 1;
+  const image_source = useMemo(() => {
+    return trench_info.image[page];
+  }, [page]);
+  const text = useMemo(() => {
+    return trench_info.text[page];
+  }, [page]);
+
+  return (
+    <View style={style.modalContainer}>
+      <Text style={style.modalText}>{trench_info.name}</Text>
+      {image_source && <Image source={image_source} style={style.modalImage} />}
+      <Tts style={style.descText} text={text} padding={0}></Tts>
+
+      <View style={style.pagination}>
+        {(page !== min_page) && <Button
+          style={style.modalButton}
+          mode="contained"
+          buttonColor={theme.colors.primary}
+          labelStyle={{ marginHorizontal: theme.spacing.lg, marginVertical: theme.spacing.sm }}
+          onPress={() => setPage(page - 1)}
+        >
+          <Text style={style.modalButtonText}>Previours</Text>
+        </Button>}
+        <Button
+          style={style.modalButton}
+          mode="contained"
+          buttonColor={theme.colors.primary}
+          labelStyle={{ marginHorizontal: theme.spacing.lg, marginVertical: theme.spacing.sm }}
+          onPress={() => {
+            if (page === max_page) {
+              close()
+            } else {
+              setPage(page + 1)
+            }
+          }}
+        >
+          <Text style={style.modalButtonText}>{ page === max_page ? 'Back' : 'Next Page' }</Text>
+        </Button>
+      </View>
+    </View>
+  );
+}
+
+const useStyle = (theme: AppTheme) =>
+  StyleSheet.create({
+    modalContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      margin: theme.spacing.md,
+      backgroundColor: "white",
+    },
+    modalText: {
+      textAlign: "center",
+      marginBottom: 24,
+      fontWeight: "bold",
+      fontSize: 26,
+    },
+    descText: {
+      textAlign: "left",
+      lineHeight: 20,
+      fontSize: 14,
+    },
+    modalImage: {
+      resizeMode: "cover",
+      width: "100%",
+      marginVertical: 20,
+      height: 200,
+    },
+    modalButton: {
+      marginTop: 20,
+    },
+    modalButtonText: {
+      color: "white",
+      textAlign: "center",
+    },
+    pagination: {
+      width: "100%",
+      flexDirection: "row",
+      display: "flex",
+      justifyContent: "space-around",
+      marginVertical: 30,
+    },
+  });

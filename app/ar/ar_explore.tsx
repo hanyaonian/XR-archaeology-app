@@ -18,9 +18,12 @@ import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/Vi
 import { useAuth } from "@/providers/auth_provider";
 import { ARLocationProvider, useARLocation } from "@/providers/ar_location_provider";
 import * as Vector from "@/plugins/vector";
-import { useARReconstruction } from "./composable/ar";
-import { ARInfo } from "./composable/ar";
+import { TrenchInfo, useARReconstruction, useTrenchGuide } from "./fixed-things/ar";
+import { ARInfo } from "./fixed-things/ar";
 import { Routes } from "../composable/routes";
+import { ReconstructionModalBody } from "./modal/reconstruction";
+import { useModal } from "./composable/modal";
+import { TrenchModalBody } from "./modal/trench-guide";
 
 const ICON_BUTTON_SIZE = 48;
 const MINI_MAP_HEIGHT = 134;
@@ -294,27 +297,38 @@ function ARExplorePage() {
     [initHeading, initLocation, comment]
   );
 
-  // const { showModal } = useReconstructionModal();
   const degree = useMemo(computeBearingDiff, [location, nearestPoint, heading, initHeading]);
   const distanceText = useMemo(getNearestDistance, [location, points, targetIndex]);
 
-  const [modalVisible, setModalVisible] = useState(false);
+  const { visible: reConModalVisible, setState: setReConModalVisible, reject: reconReject } = useModal()
+  const { visible: trenchModalState, setState: setTrenchModalState, reject: trenchReject } = useModal()
+  
+  const [trench_info, setTrenchInfo] = useState<TrenchInfo>();
   const [ar_info, setArInfo] = useState<ARInfo>();
-  const handleClose = () => {
-    setModalVisible(false);
-  };
-  const gotoReconstructionGuide = () => {
-    setModalVisible(false);
-    if (ar_info) {
-      router.replace({ pathname: Routes.ArGuide, params: { id: ar_info.id } });
-    }
-  };
-
   useEffect(() => {
-    const ar_info = useARReconstruction(location);
-    if (ar_info && !modalVisible) {
-      setArInfo(ar_info);
-      setModalVisible(true);
+    const trench_data = useTrenchGuide(location);
+    if (trench_data?.id !== trench_info?.id) {
+      setTrenchModalState('hide');
+    }
+    if (trenchModalState === 'ended') {
+      return;
+    }
+    if (trench_data && trenchModalState !== 'show') {
+      setTrenchInfo(trench_data);
+      setTrenchModalState('show');
+    }
+  }, [location]);
+  useEffect(() => {
+    const detected_ar_info = useARReconstruction(location);
+    if (detected_ar_info?.id !== ar_info?.id) {
+      setReConModalVisible('hide');
+    }
+    if (reConModalVisible === 'ended') {
+      return;
+    }
+    if (detected_ar_info && reConModalVisible !== 'show') {
+      setArInfo(detected_ar_info);
+      setReConModalVisible('show');
     }
   }, [location]);
 
@@ -488,31 +502,11 @@ function ARExplorePage() {
           )}
         </>
       )}
-      <Modal animationType="slide" transparent={false} visible={modalVisible}>
-        <View style={style.modalContainer}>
-          <Text
-            style={style.modalText}
-          >{`You are near to \n \n ${ar_info?.name} \n \n Do you want to try the reconstruction function with AR?`}</Text>
-          {ar_info?.images?.[0] && <Image source={ar_info?.images?.[0]} style={style.modalImage} />}
-          <Button
-            style={style.modalButton}
-            mode="contained"
-            buttonColor={theme.colors.primary}
-            labelStyle={{ marginHorizontal: theme.spacing.lg, marginVertical: theme.spacing.sm }}
-            onPress={gotoReconstructionGuide}
-          >
-            <Text style={style.modalButtonText}>Let's See!</Text>
-          </Button>
-          <Button
-            style={style.modalButton}
-            mode="contained"
-            buttonColor={theme.colors.error}
-            labelStyle={{ marginHorizontal: theme.spacing.lg, marginVertical: theme.spacing.sm }}
-            onPress={handleClose}
-          >
-            <Text style={style.modalButtonText}>Not interest</Text>
-          </Button>
-        </View>
+      <Modal animationType="slide" transparent={false} visible={reConModalVisible === 'show'}>
+        { ar_info && <ReconstructionModalBody ar_info={ar_info} close={reconReject}></ReconstructionModalBody>}
+      </Modal>
+      <Modal animationType="slide" transparent={false} visible={trenchModalState === 'show'}>
+        { trench_info && <TrenchModalBody trench_info={trench_info} close={trenchReject}></TrenchModalBody>}
       </Modal>
     </MainBody>
   );
@@ -614,28 +608,4 @@ const useStyle = ({ theme }: { theme: AppTheme }) =>
       alignItems: "center",
       marginTop: 20,
     },
-    modalContainer: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      padding: 20,
-      backgroundColor: "white",
-    },
-    modalText: {
-      textAlign: "center",
-      marginBottom: 20,
-      fontSize: 16,
-    },
-    modalImage: {
-      resizeMode: "cover",
-      width: "100%",
-      height: 200,
-    },
-    modalButton: {
-      marginTop: 20,
-    },
-    modalButtonText: {
-      color: "white",
-      textAlign: "center",
-    },
-  });
+  })

@@ -12,7 +12,7 @@ import { useAppTheme } from "@providers/style_provider";
 import { Paginated, useFeathers } from "@/providers/feathers_provider";
 import { Location, Route } from "@/models";
 import { getCurrentPositionAsync } from "expo-location";
-import { vedi_point } from "@/app/ar/composable/ar";
+import { vedi_point } from "@/app/ar/fixed-things/ar";
 
 const ITEM_WIDTH = 300;
 const ITEM_SPACING = 10;

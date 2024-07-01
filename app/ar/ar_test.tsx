@@ -24,7 +24,7 @@ import { useArModelStore } from "@/app/state/position";
 import { useAppStore } from "@/app/state/app";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
-import { ARInfo, WALL_INFOS } from "./composable/ar";
+import { ARInfo, WALL_INFOS } from "./fixed-things/ar";
 
 const GuideScene = observer(() => {
   const [lastforward, setForward] = useState([0, 0, 0]);

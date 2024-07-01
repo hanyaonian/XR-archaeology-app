@@ -10,7 +10,7 @@ import { ActivityIndicator, Text } from "react-native-paper";
 
 const mappingDesc: Record<AttractionType, { title: string; desc?: string }> = {
   Attraction: {
-    title: "Fun Attractions",
+    title: "Attractions",
     desc: "Vedi is know for its rich history, culture and tradition",
   },
   Restaurant: {
@@ -85,9 +85,9 @@ export default function Page() {
   const header = (() => {
     return (
       <View style={{ paddingHorizontal: theme.spacing.lg, paddingBottom: theme.spacing.lg, paddingTop: theme.spacing.md }}>
-        <Text variant="bodyMedium" style={{ color: theme.colors.grey2 }}>
+        {/* <Text variant="bodyMedium" style={{ color: theme.colors.grey2 }}>
           {mappingDesc[type].desc}
-        </Text>
+        </Text> */}
         <SearchInput onChangeText={(val) => setSearchText(val)}></SearchInput>
       </View>
     );

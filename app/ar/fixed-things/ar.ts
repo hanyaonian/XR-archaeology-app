@@ -1,0 +1,105 @@
+import { distanceFromLatLonInKm } from "@/plugins/geolocation";
+import { LatLng } from "react-native-maps";
+
+export type ARInfo = (typeof WALL_INFOS)[number];
+export type TrenchInfo = (typeof TRENCH_INFOS)[number];
+
+export const TRENCH_INFOS: {
+  name: string;
+  id: number;
+  point: LatLng;
+  image: number[];
+  text: string[];
+}[] = [
+    {
+      id: 1,
+      name: "Lower Trench",
+      point: {
+        latitude: 39.92583774917186,
+        longitude: 44.742878783616526,
+      },
+      image: [require('@assets/images/lower-trench1.jpg'), require('@assets/images/lower-trench1.jpg')],
+      text: [
+        "The lower trench explores the area between the site’s two main fortification walls. Archaeologists found a series of rough rectangular structures built near the surface sitting within the local drainage channel here. They speculate that the structures at the top might be built during the late Medieval period for capturing water or for animal pens.",
+        "Below the top layer, there are at least four wash layers. The bottom layer sits directly above natural bedrock and archaeologists found pottery dating back to the Late Bronze Age-Iron Age I here.",
+      ],
+    },
+  ];
+
+// vedi fortress point; init point
+export const WALL_INFOS: {
+  point: LatLng;
+  id: number;
+  name: string;
+  briefDesc: string;
+  images: number[];
+  model: number;
+  [key: string]: any;
+}[] = [
+  {
+    id: 3,
+    point: {
+      latitude: 39.9261389,
+      longitude: 44.7382778,
+    },
+    reversed: true,
+    name: "Vedi Fortress: Lower wall From Back",
+    briefDesc: "Vedi Fortress: Lower wall From Back",
+    model: require("@assets/models/wall/wall1-reverse.glb"),
+    images: [require("@/assets/images/wall2.jpg")],
+  },
+  {
+    point: {
+      latitude: 39.925778,
+      longitude: 44.741444,
+    },
+    id: 2,
+    name: "Vedi Fortress: Upper wall",
+    briefDesc: "Vedi Fortress: Upper wall",
+    model: require("@assets/models/wall/wall2.glb"),
+    images: [require("@/assets/images/wall3.jpg")],
+  },
+  {
+    point: {
+      latitude: 39.925806,
+      longitude: 44.7415,
+    },
+    id: 1,
+    name: "Vedi Fortress: Lower wall",
+    briefDesc: "Vedi Fortress: Lower wall",
+    model: require("@assets/models/wall/wall1.glb"),
+    images: [require("@/assets/images/wall4.jpg")],
+  },
+] as const;
+
+export const vedi_point = {
+  latitude: 39.92634215565024,
+  longitude: 44.74058628178656,
+};
+
+function findTargetInrange<T extends { point: LatLng }>(data: T[], location?: LatLng) {
+  if (__DEV__) {
+    // local test
+    return data.at(0);
+  }
+  if (!location) {
+    return null;
+  }
+  for (const wall_point of data) {
+    const { point } = wall_point;
+    const distance = distanceFromLatLonInKm(location, point) * 1000;
+    // in 10m, guide user to reconstruction;
+    if (distance < 10) {
+      return wall_point;
+    }
+  }
+  return null;
+}
+
+export function useTrenchGuide(location?: LatLng) {
+  return findTargetInrange(TRENCH_INFOS, location);
+}
+
+export function useARReconstruction(location?: LatLng) {
+  return findTargetInrange(WALL_INFOS, location);
+}

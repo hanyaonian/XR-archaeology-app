@@ -4,7 +4,7 @@ import { AppTheme, useAppTheme } from "@/providers/style_provider";
 import _ from "lodash";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
-import { WALL_INFOS } from "./composable/ar";
+import { WALL_INFOS } from "./fixed-things/ar";
 
 export default function Page() {
   const { theme } = useAppTheme();

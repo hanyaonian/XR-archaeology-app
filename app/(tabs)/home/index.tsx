@@ -1,7 +1,7 @@
 import { Button, Text } from "react-native-paper";
 import { IconBtn, MainBody, NAVBAR_HEIGHT } from "@components";
 import { View, StyleSheet, ImageBackground, useWindowDimensions, Pressable, ScrollView, Image, Linking } from "react-native";
-import { useState, Children } from "react";
+import { useState } from "react";
 import { AppTheme, useAppTheme } from "@providers/style_provider";
 import { useAuth } from "@providers/auth_provider";
 import { Link, router } from "expo-router";
@@ -84,7 +84,7 @@ export default function Home() {
             paddingHorizontal: theme.spacing.lg,
           }}
         >
-          <Text variant="titleMedium" style={{ color: theme.colors.background }}>
+          <Text variant="titleMedium" style={{ color: theme.colors.background, paddingBottom: theme.spacing.xs }}>
             {`Welcome to \nthe Vedi River Valley!`}
           </Text>
 
@@ -103,12 +103,7 @@ export default function Home() {
             const { height } = e.nativeEvent.layout;
             setTopSectionHeight(height);
           }}
-          style={{
-            flexDirection: "column",
-            rowGap: theme.spacing.sm,
-            paddingHorizontal: theme.spacing.lg,
-            paddingBottom: theme.spacing.lg,
-          }}
+          style={style.topSecion}
         >
           <Link href={Routes.History} asChild>
             <Pressable style={{ elevation: 12 }}>
@@ -121,21 +116,11 @@ export default function Home() {
               </ImageBackground>
             </Pressable>
           </Link>
-
-          <View style={{ columnGap: theme.spacing.md, rowGap: theme.spacing.sm, flexDirection: "row", flexWrap: "wrap" }}>
-            {Entries.map((v, index) => CardView({ ...v, index }))}
-          </View>
+          <View style={style.entryContainer}>{Entries.map((v, index) => CardView({ ...v, index }))}</View>
         </View>
         {/* Login / Favorite Place*/}
         <View
-          style={{
-            paddingHorizontal: theme.spacing.lg,
-            marginVertical: theme.spacing.lg,
-            flexDirection: "column",
-            gap: theme.spacing.sm,
-            flexGrow: 1,
-            flexShrink: 0,
-          }}
+          style={[style.loginSection, isPortrait(orientation) ? { paddingBottom: NAVBAR_HEIGHT } : {}]}
         >
           {!authenticated ? (
             <View style={{ flexDirection: "column", gap: theme.spacing.sm }}>
@@ -212,7 +197,7 @@ const useStyle = ({ theme, screenWidth, screenHeight }: { theme: AppTheme; scree
     subThumbContainer: {
       borderRadius: theme.spacing.xs,
       overflow: "hidden",
-      height: Math.round((((screenHeight - theme.spacing.lg * 2 - theme.spacing.md) / 2) * 2.5) / 9),
+      height: '30%',
       width: Math.round((screenWidth - theme.spacing.lg * 2 - theme.spacing.md) / 2 - 1),
       position: "relative",
       elevation: 8,
@@ -258,5 +243,24 @@ const useStyle = ({ theme, screenWidth, screenHeight }: { theme: AppTheme; scree
       top: theme.spacing.xxs,
       right: theme.spacing.xs,
       position: "absolute",
+    },
+    topSecion: {
+      flex: 1,
+      flexDirection: "column",
+      rowGap: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.lg,
+    },
+    loginSection: {
+      paddingHorizontal: theme.spacing.lg,
+      marginTop: theme.spacing.md,
+      flexDirection: "column",
+      gap: theme.spacing.sm,
+    },
+    entryContainer: {
+      flex: 1,
+      columnGap: theme.spacing.md,
+      rowGap: theme.spacing.sm,
+      flexDirection: "row",
+      flexWrap: "wrap",
     },
   });
