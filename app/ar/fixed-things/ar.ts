@@ -1,4 +1,5 @@
 import { distanceFromLatLonInKm } from "@/plugins/geolocation";
+import { ToastAndroid } from "react-native";
 import { LatLng } from "react-native-maps";
 
 export type ARInfo = (typeof WALL_INFOS)[number];
@@ -77,7 +78,11 @@ export const vedi_point = {
   longitude: 44.74058628178656,
 };
 
-function findTargetInrange<T extends { point: LatLng }>(data: T[], location?: LatLng) {
+function findTargetInrange<T extends { point: LatLng, name: string }>(data: T[], options: {
+  use_hint: boolean,
+  distance?: number,
+}, location?: LatLng) {
+  const { use_hint = false, distance: d = 20 } = options;
   if (__DEV__) {
     // local test
     return data.at(0);
@@ -85,21 +90,24 @@ function findTargetInrange<T extends { point: LatLng }>(data: T[], location?: La
   if (!location) {
     return null;
   }
-  for (const wall_point of data) {
-    const { point } = wall_point;
+  for (const item of data) {
+    const { point } = item;
     const distance = distanceFromLatLonInKm(location, point) * 1000;
+    if (use_hint) {
+      ToastAndroid.show(`To ${item.name} has ${distance}m`, ToastAndroid.SHORT)
+    }
     // in 10m, guide user to reconstruction;
-    if (distance < 10) {
-      return wall_point;
+    if (distance < d) {
+      return item;
     }
   }
   return null;
 }
 
 export function useTrenchGuide(location?: LatLng) {
-  return findTargetInrange(TRENCH_INFOS, location);
+  return findTargetInrange(TRENCH_INFOS, { use_hint: true }, location);
 }
 
 export function useARReconstruction(location?: LatLng) {
-  return findTargetInrange(WALL_INFOS, location);
+  return findTargetInrange(WALL_INFOS, { use_hint: false }, location);
 }

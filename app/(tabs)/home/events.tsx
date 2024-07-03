@@ -8,6 +8,34 @@ import { Calendar, CalendarUtils, DateData } from "react-native-calendars";
 import { MarkedDates } from "react-native-calendars/src/types";
 import { ActivityIndicator, Button, Text } from "react-native-paper";
 
+function getDateBorder(date: Date, type: 'end' | 'start') {
+  if (type === 'end') {
+    date.setHours(23);
+    date.setMinutes(59);
+  }
+  if (type === 'start') {
+    date.setHours(0);
+    date.setMinutes(0);
+  }
+  return date;
+}
+
+function getDateArrayBetweenTimestamps(startTimestamp, endTimestamp) {
+  let dates: string[] = [];
+  let currentTimestamp = startTimestamp;
+  if (startTimestamp > endTimestamp) {
+    throw new Error("Date error");
+  }
+  while (currentTimestamp <= endTimestamp) {
+    let date = new Date(currentTimestamp);
+    let formattedDate = CalendarUtils.getCalendarDateString(date);
+    dates.push(formattedDate);
+    currentTimestamp += 24 * 60 * 60 * 1000;
+  }
+
+  return dates;
+}
+
 export default function Page() {
   const feathers = useFeathers();
   const { theme } = useAppTheme();
@@ -19,19 +47,40 @@ export default function Page() {
   const minDate = initDate;
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const markedDates: MarkedDates = useMemo(() => {
-    if (selectedDate)
-      return {
+    const actDates: Record<string, { marked: boolean }> = {};
+    events.forEach((event) => {
+      const evt_dates = getDateArrayBetweenTimestamps(new Date(event.startDate).getTime(), new Date(event.endDate).getTime());
+      evt_dates.forEach((date_str) => {
+        actDates[date_str] = {
+          marked: true,
+        };
+      });
+    });
+    if (!selectedDate) return actDates;
+    const result = Object.assign(
+      actDates,
+      {
         [selectedDate]: {
           selected: true,
           selectedColor: theme.colors.primary,
           selectedTextColor: theme.colors.textOnPrimary,
           customTextStyle: { textAlignVertical: "center" },
         },
-      };
-    else {
-      return {};
-    }
-  }, [selectedDate]);
+      },
+    );
+    return result;
+  }, [selectedDate, events]);
+
+  const shown_events =  useMemo(() => {
+    if (!selectedDate) return events;
+    const target_events = events.find(evt => {
+      const selected_ts = new Date(selectedDate).getTime();
+      const start = getDateBorder(new Date(evt.startDate), 'start')
+      const end = getDateBorder(new Date(evt.endDate), 'end')
+      return selected_ts >= start.getTime() && selected_ts <= end.getTime();
+    });
+    return target_events ? [target_events] : [];
+  }, [selectedDate])
 
   const onDayPress = useCallback((day: DateData) => {
     setSelectedDate(day.dateString);
@@ -94,7 +143,7 @@ export default function Page() {
             paddingBottom: NAVBAR_HEIGHT + theme.spacing.md,
             paddingHorizontal: theme.spacing.sm,
           }}
-          data={events}
+          data={shown_events}
           ItemSeparatorComponent={() => <View style={{ height: theme.spacing.md }} />}
           renderItem={({ item }) => {
             return <EventItem {...item} />;
