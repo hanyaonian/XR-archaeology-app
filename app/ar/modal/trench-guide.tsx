@@ -13,6 +13,7 @@ export function TrenchModalBody(props: { trench_info: TrenchInfo; close: () => v
   const [page, setPage] = useState(0);
   const min_page = 0;
   const max_page = trench_info.text.length - 1;
+  const [agree, setAgree] = useState(false);
   const image_source = useMemo(() => {
     return trench_info.image[page];
   }, [page]);
@@ -22,36 +23,68 @@ export function TrenchModalBody(props: { trench_info: TrenchInfo; close: () => v
 
   return (
     <View style={style.modalContainer}>
-      <Text style={style.modalText}>{trench_info.name}</Text>
+      <Text style={style.modalText}>{!agree ? `You've reached ${'\n'} ${trench_info.name}` : trench_info.name}</Text>
       {image_source && <Image source={image_source} style={style.modalImage} />}
-      <Tts style={style.descText} text={text} padding={0}></Tts>
 
-      <View style={style.pagination}>
-        {(page !== min_page) && <Button
-          style={style.modalButton}
-          mode="contained"
-          buttonColor={theme.colors.primary}
-          labelStyle={{ marginHorizontal: theme.spacing.lg, marginVertical: theme.spacing.sm }}
-          onPress={() => setPage(page - 1)}
-        >
-          <Text style={style.modalButtonText}>Previours</Text>
-        </Button>}
-        <Button
-          style={style.modalButton}
-          mode="contained"
-          buttonColor={theme.colors.primary}
-          labelStyle={{ marginHorizontal: theme.spacing.lg, marginVertical: theme.spacing.sm }}
-          onPress={() => {
-            if (page === max_page) {
-              close()
-            } else {
-              setPage(page + 1)
-            }
-          }}
-        >
-          <Text style={style.modalButtonText}>{ page === max_page ? 'Back' : 'Next Page' }</Text>
-        </Button>
-      </View>
+      {agree ? (
+        <>
+          <Tts style={style.descText} text={text} padding={0}></Tts>
+          <View style={style.pagination}>
+            {page !== min_page && (
+              <Button
+                style={style.modalButton}
+                mode="contained"
+                buttonColor={theme.colors.primary}
+                labelStyle={{ marginHorizontal: theme.spacing.lg, marginVertical: theme.spacing.sm }}
+                onPress={() => setPage(page - 1)}
+              >
+                <Text style={style.modalButtonText}>Previous</Text>
+              </Button>
+            )}
+            <Button
+              style={style.modalButton}
+              mode="contained"
+              buttonColor={theme.colors.primary}
+              labelStyle={{ marginHorizontal: theme.spacing.lg, marginVertical: theme.spacing.sm }}
+              onPress={() => {
+                if (page === max_page) {
+                  close();
+                } else {
+                  setPage(page + 1);
+                }
+              }}
+            >
+              <Text style={style.modalButtonText}>{page === max_page ? "Back" : "Next Page"}</Text>
+            </Button>
+          </View>
+        </>
+      ) : (
+        <>
+          <Text style={style.descText}>Do you want to view the introduction?</Text>
+          <View style={style.pagination}>
+            <Button
+              style={style.modalButton}
+              mode="contained"
+              buttonColor={theme.colors.primary}
+              labelStyle={{ marginHorizontal: theme.spacing.lg, marginVertical: theme.spacing.sm }}
+              onPress={() => setAgree(true)}
+            >
+              <Text style={style.modalButtonText}>Yes, learn more</Text>
+            </Button>
+            <Button
+              style={style.modalButton}
+              mode="contained"
+              buttonColor={theme.colors.error}
+              labelStyle={{ marginHorizontal: theme.spacing.lg, marginVertical: theme.spacing.sm }}
+              onPress={() => {
+                close();
+              }}
+            >
+              <Text style={style.modalButtonText}>No, not now</Text>
+            </Button>
+          </View>
+        </>
+      )}
     </View>
   );
 }

@@ -7,6 +7,7 @@ import { GeoPoint, Tag } from "@/models";
 import { distanceFromLatLonInKm } from "@/plugins/geolocation";
 import * as ExpoLocation from "expo-location";
 import { Routes } from "@/app/composable/routes";
+import { getMapThirdLink } from "@/app/composable/links";
 
 /**
  * @property {T[]} points is a list of locations in which the target point exits.
@@ -69,7 +70,7 @@ export default function ExploreItem<T extends GeoPoint>(item: ItemProps<T>) {
   };
 
   const useGoogleMap = () => {
-    Linking.openURL(`https://google.com/maps/place/${point.latitude}+${point.longitude}`)
+    Linking.openURL(getMapThirdLink(point))
   }
 
   const startARTour = async () => {

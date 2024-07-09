@@ -9,7 +9,7 @@ import {
   ViroARCamera,
   ViroCameraTransform,
 } from "@viro-community/react-viro";
-import { useAppTheme } from "@providers/style_provider";
+import { AppTheme, useAppTheme } from "@providers/style_provider";
 import { IconBtn, MainBody } from "@/components";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ChevronLeftIcon } from "@/components/icons";
@@ -25,12 +25,13 @@ import { useAppStore } from "@/app/state/app";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { ARInfo, WALL_INFOS } from "./fixed-things/ar";
+import { Image } from "react-native";
 
 const GuideScene = observer(() => {
   const [lastforward, setForward] = useState([0, 0, 0]);
   const ModelStore = useArModelStore();
   const params = useLocalSearchParams<{ id?: "1" | "2" }>();
-  const wall = WALL_INFOS.find(wall => wall.id === Number(params.id)) as ARInfo;
+  const wall = WALL_INFOS.find((wall) => wall.id === Number(params.id)) as ARInfo;
 
   useEffect(() => {
     if (ModelStore.stage !== "unlock") {
@@ -79,7 +80,7 @@ const GuideScene = observer(() => {
 const ARTest = observer(() => {
   const { theme } = useAppTheme();
   const { top } = useSafeAreaInsets();
-  const style = useStyle();
+  const style = useStyle(theme);
   const appStore = useAppStore();
   const ModelStore = useArModelStore();
   const [status, requestPermission] = MediaLibrary.usePermissions();
@@ -109,11 +110,11 @@ const ARTest = observer(() => {
         ModelStore.setModelRotation([x - distance_unit, y, z]);
         break;
       }
-      case 'rotate-z-minus': {
+      case "rotate-z-minus": {
         ModelStore.setModelRotation([x, y, z - distance_unit]);
         break;
       }
-      case 'rotate-z-plus': {
+      case "rotate-z-plus": {
         ModelStore.setModelRotation([x, y, z + distance_unit]);
         break;
       }
@@ -184,7 +185,7 @@ const ARTest = observer(() => {
   };
 
   useEffect(() => {
-    appStore.setAppBar('hidden');
+    appStore.setAppBar("hidden");
     ModelStore.reset();
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE_RIGHT);
     return () => {
@@ -193,11 +194,16 @@ const ARTest = observer(() => {
         if (curOrientation !== ScreenOrientation.Orientation.PORTRAIT_UP) {
           ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
         }
-        appStore.setAppBar('show');
+        appStore.setAppBar("show");
       }, 1000);
     };
   }, []);
   // @ts-ignore
+
+  const [hint, setHint] = useState(false);
+  const showHint = () => {
+    setHint(!hint);
+  };
 
   return (
     <MainBody>
@@ -206,6 +212,10 @@ const ARTest = observer(() => {
         <ViroARSceneNavigator initialScene={{ scene: GuideScene }} />
         {ModelStore.stage !== "screenshot" && (
           <>
+            <View style={style.hintContainer}>
+              <IconBtn key={"home"} icon="help" style={{ zIndex: 10 }} iconProps={{ fill: theme.colors.primary }} onPress={() => showHint()} />
+              {hint ? <Image source={require("@/assets/images/guide/hint2.jpg")} style={style.hintImage} /> : null}
+            </View>
             <View
               style={[
                 style.rowLayout,
@@ -246,9 +256,7 @@ const ARTest = observer(() => {
                 alignItems: "center",
                 paddingHorizontal: theme.spacing.md,
               }}
-            >
-
-            </View>
+            ></View>
             {/* Distance slider */}
             <View
               style={{
@@ -286,8 +294,22 @@ const ARTest = observer(() => {
 
 export default ARTest;
 
-const useStyle = () =>
+const useStyle = (theme: AppTheme) =>
   StyleSheet.create({
+    hintContainer: {
+      top: theme.spacing.sm,
+      right: theme.spacing.md,
+      display: "flex",
+      position: "absolute",
+      alignItems: "center",
+    },
+    hintImage: {
+      width: 300,
+      height: 150,
+      right: 50,
+      position: 'absolute',
+      top: theme.spacing.lg,
+    },
     rowLayout: {
       flexDirection: "row",
       alignItems: "center",
