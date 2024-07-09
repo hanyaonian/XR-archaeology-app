@@ -125,7 +125,7 @@ export default function Page() {
               >
                 <Button
                   mode="contained"
-                  onPress={() => router.replace({ pathname: Routes.Map, params: { latitude: item.latitude, longitude: item.longitude } })}
+                  onPress={() => router.replace({ pathname: Routes.Map, params: { latitude: item.latitude, id: item._id, longitude: item.longitude } })}
                   textColor={theme.colors.textOnPrimary}
                   style={{ borderRadius: theme.borderRadius.xs }}
                   icon={() => <LocationIcon fill={theme.colors.textOnPrimary} size={20} />}

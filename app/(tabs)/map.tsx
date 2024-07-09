@@ -49,6 +49,17 @@ export default function Explore() {
   const mapRef = createRef<MapView>();
 
   const routeListRef = createRef<FlatList>();
+
+  useEffect(() => {
+    const index = (points ?? []).findIndex(v => v._id === id);
+    if (index >= 0) {
+      routeListRef.current?.scrollToIndex({
+        animated: true,
+        index
+      });
+    }
+  }, [id, filteredPoints]);
+
   const cardListStyle = useAnimatedStyle(() => {
     return {
       position: "absolute",

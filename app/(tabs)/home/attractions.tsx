@@ -125,6 +125,7 @@ export default function Page() {
 
           if (brief && item.contact) brief += `\nContact no.: ${item.contact}`;
           const props: ListItemProps = {
+            id: item._id,
             name: item.name,
             briefDesc: brief,
             images: item.thumbnails,
