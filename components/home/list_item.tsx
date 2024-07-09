@@ -45,7 +45,7 @@ export default function ListItem({ name, briefDesc, images, href, showNavigate, 
           onPress={() =>
             router.replace({
               pathname: Routes.Map,
-              params: { latitude, longitude },
+              params: { latitude, longitude, },
             })
           }
         />

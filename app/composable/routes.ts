@@ -14,6 +14,8 @@ export enum Routes {
   History = '/home/history',
 
   // list views
+  Experience = "/home/experience",
+  ExperienceDetail = "/home/experience_detail",
   Living = "/home/livings",
   Hiking = "/home/hiking",
   Events = "/home/events",
